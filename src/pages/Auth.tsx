@@ -122,33 +122,26 @@ const Auth = () => {
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = async (requireInviteCode: boolean = false) => {
     try {
-      console.log("Google sign-in clicked, invite code:", googleInviteCode);
-      
-      // Validate invite code
-      const validation = signUpSchema.shape.inviteCode.safeParse(googleInviteCode);
-      if (!validation.success) {
-        console.error("Validation failed:", validation.error);
-        toast.error(validation.error.errors[0].message);
-        return;
+      // Only validate invite code for sign-ups
+      if (requireInviteCode) {
+        const validation = signUpSchema.shape.inviteCode.safeParse(googleInviteCode);
+        if (!validation.success) {
+          toast.error(validation.error.errors[0].message);
+          return;
+        }
+
+        const { data: isValid, error: codeError } = await supabase.rpc('use_invite_code', {
+          code_text: googleInviteCode.toUpperCase()
+        });
+
+        if (codeError || !isValid) {
+          toast.error("Invalid or expired invite code");
+          return;
+        }
       }
 
-      console.log("Validation passed, checking invite code...");
-      
-      // Check if invite code is valid
-      const { data: isValid, error: codeError } = await supabase.rpc('use_invite_code', {
-        code_text: googleInviteCode.toUpperCase()
-      });
-
-      console.log("Invite code check result:", { isValid, codeError });
-
-      if (codeError || !isValid) {
-        toast.error("Invalid or expired invite code");
-        return;
-      }
-
-      console.log("Starting OAuth flow...");
       setLoading(true);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -157,14 +150,11 @@ const Auth = () => {
         },
       });
 
-      console.log("OAuth result:", { error });
-
       if (error) {
         toast.error(error.message);
         setLoading(false);
       }
     } catch (error: any) {
-      console.error("Error in handleGoogleSignIn:", error);
       toast.error(error.message || "An error occurred");
       setLoading(false);
     }
@@ -194,21 +184,12 @@ const Auth = () => {
                   <CardDescription>Sign in to continue creating</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="google-invite">Invite Code</Label>
-                    <Input
-                      id="google-invite"
-                      placeholder="Enter your invite code"
-                      value={googleInviteCode}
-                      onChange={(e) => setGoogleInviteCode(e.target.value.toUpperCase())}
-                    />
-                  </div>
                   <Button
                     type="button"
                     variant="outline"
                     className="w-full"
-                    onClick={handleGoogleSignIn}
-                    disabled={loading || !googleInviteCode}
+                    onClick={() => handleGoogleSignIn(false)}
+                    disabled={loading}
                   >
                     <Chrome className="w-4 h-4 mr-2" />
                     Continue with Google
@@ -276,7 +257,7 @@ const Auth = () => {
                     type="button"
                     variant="outline"
                     className="w-full"
-                    onClick={handleGoogleSignIn}
+                    onClick={() => handleGoogleSignIn(true)}
                     disabled={loading || !googleInviteCode}
                   >
                     <Chrome className="w-4 h-4 mr-2" />
