@@ -110,14 +110,19 @@ serve(async (req) => {
     // Handle different model types
     if (video.model === "sora-2-pro-storyboard") {
       // Storyboard model requires shots array
+      // Convert frames back to seconds for the API (frames are stored as duration * 30)
+      const durationInSeconds = Math.round(video.n_frames / 30);
+      
+      console.log(`Storyboard: n_frames=${video.n_frames}, calculated duration=${durationInSeconds}s`);
+      
       kiePayload.input = {
         shots: [
           {
             description: video.prompt,
-            duration: video.n_frames / 30, // Convert frames to seconds
+            duration: durationInSeconds,
           }
         ],
-        n_frames: String(video.n_frames / 30), // Convert frames to seconds: "10", "15", or "25"
+        n_frames: String(durationInSeconds), // Must be "10", "15", or "25"
         aspect_ratio: video.aspect_ratio === "16:9" ? "landscape" : "portrait",
       };
 
