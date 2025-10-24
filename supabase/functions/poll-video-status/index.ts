@@ -96,17 +96,22 @@ serve(async (req) => {
 
           results.push({ videoId: video.id, status: "success" });
         } else if (state === "fail") {
-          console.log(`Video ${video.id} failed`);
+          const failCode = pollData.data?.failCode || null;
+          const failMsg = pollData.data?.failMsg || "Video generation failed";
+          const failReason = failMsg + (failCode ? ` (Error code: ${failCode})` : "");
+          
+          console.log(`Video ${video.id} failed: ${failReason}`);
 
           await supabase
             .from("videos")
             .update({
               status: "fail",
+              fail_reason: failReason,
               updated_at: new Date().toISOString(),
             })
             .eq("id", video.id);
 
-          results.push({ videoId: video.id, status: "fail" });
+          results.push({ videoId: video.id, status: "fail", reason: failReason });
         } else {
           console.log(`Video ${video.id} still processing, state: ${state}`);
           results.push({ videoId: video.id, status: "still_processing", state });

@@ -30,6 +30,7 @@ interface Video {
   result_url: string | null;
   created_at: string;
   n_frames: number;
+  fail_reason: string | null;
 }
 
 const Library = () => {
@@ -191,6 +192,12 @@ const Library = () => {
                           {video.aspect_ratio}
                         </Badge>
                       </div>
+
+                      {video.status === "fail" && video.fail_reason && (
+                        <div className="text-xs text-red-600 bg-red-500/10 p-2 rounded border border-red-500/20">
+                          {video.fail_reason}
+                        </div>
+                      )}
 
                       <div className="text-xs text-muted-foreground">
                         {video.model} • {Math.round(video.n_frames / 30)}s

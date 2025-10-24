@@ -96,6 +96,7 @@ export type Database = {
         Row: {
           aspect_ratio: string
           created_at: string
+          fail_reason: string | null
           id: string
           image_url: string | null
           model: string
@@ -111,6 +112,7 @@ export type Database = {
         Insert: {
           aspect_ratio: string
           created_at?: string
+          fail_reason?: string | null
           id?: string
           image_url?: string | null
           model: string
@@ -126,6 +128,7 @@ export type Database = {
         Update: {
           aspect_ratio?: string
           created_at?: string
+          fail_reason?: string | null
           id?: string
           image_url?: string | null
           model?: string
