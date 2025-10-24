@@ -147,8 +147,12 @@ serve(async (req) => {
         prompt: video.prompt,
         aspectRatio: video.aspect_ratio === "16:9" ? "landscape" : "portrait",
         nFrames: String(durationInSeconds), // API expects duration in seconds as string
-        removeWatermark: video.remove_watermark,
       };
+
+      // Only add removeWatermark for base models (not Pro)
+      if (!video.model.includes("pro")) {
+        kiePayload.input.removeWatermark = video.remove_watermark;
+      }
 
       // Handle image URLs for image-to-video models
       if (video.image_url && video.model.includes("image-to-video")) {
