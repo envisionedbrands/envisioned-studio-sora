@@ -54,40 +54,50 @@ serve(async (req) => {
       throw new Error("Video not found");
     }
 
-    // Check credits and deduct immediately to prevent race condition
-    const creditsRequired = video.model === "sora-2-pro-storyboard" ? 2 : 1;
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("credits")
-      .eq("id", user.id)
-      .single();
+    // Check if user is admin
+    const { data: isAdmin } = await supabase.rpc("has_role", {
+      _user_id: user.id,
+      _role: "admin"
+    });
 
-    if (profileError || !profile || profile.credits < creditsRequired) {
-      await supabase
-        .from("videos")
-        .update({ status: "fail" })
-        .eq("id", videoId);
-      
-      throw new Error(`Insufficient credits (requires ${creditsRequired})`);
+    // Check credits and deduct immediately to prevent race condition (skip for admins)
+    if (!isAdmin) {
+      const creditsRequired = video.model === "sora-2-pro-storyboard" ? 2 : 1;
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("credits")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError || !profile || profile.credits < creditsRequired) {
+        await supabase
+          .from("videos")
+          .update({ status: "fail" })
+          .eq("id", videoId);
+        
+        throw new Error(`Insufficient credits (requires ${creditsRequired})`);
+      }
+
+      // SECURITY FIX: Deduct credits immediately using optimistic locking
+      const { error: deductError } = await supabase
+        .from("profiles")
+        .update({ credits: profile.credits - creditsRequired })
+        .eq("id", user.id)
+        .eq("credits", profile.credits); // Atomic check to prevent race condition
+
+      if (deductError) {
+        console.error('Credit deduction failed:', deductError);
+        await supabase
+          .from("videos")
+          .update({ status: "fail" })
+          .eq("id", videoId);
+        throw new Error('Credit deduction failed. Please try again.');
+      }
+
+      console.log(`Credits deducted: ${creditsRequired} credits from user ${user.id}`);
+    } else {
+      console.log(`Admin user ${user.id} - skipping credit check`);
     }
-
-    // SECURITY FIX: Deduct credits immediately using optimistic locking
-    const { error: deductError } = await supabase
-      .from("profiles")
-      .update({ credits: profile.credits - creditsRequired })
-      .eq("id", user.id)
-      .eq("credits", profile.credits); // Atomic check to prevent race condition
-
-    if (deductError) {
-      console.error('Credit deduction failed:', deductError);
-      await supabase
-        .from("videos")
-        .update({ status: "fail" })
-        .eq("id", videoId);
-      throw new Error('Credit deduction failed. Please try again.');
-    }
-
-    console.log(`Credits deducted: ${creditsRequired} credits from user ${user.id}`);
 
     console.log("Creating Kie.ai task for video:", videoId);
 
