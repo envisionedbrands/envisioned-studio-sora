@@ -69,15 +69,15 @@ const Storyboard = () => {
     setLoading(true);
 
     try {
-      // Check credits
+      // Check credits (storyboards require 2 credits)
       const { data: profile } = await supabase
         .from("profiles")
         .select("credits")
         .eq("id", session.user.id)
         .single();
 
-      if (!profile || profile.credits <= 0) {
-        toast.error("Insufficient credits");
+      if (!profile || profile.credits < 2) {
+        toast.error("Insufficient credits (storyboards require 2 credits)");
         setLoading(false);
         return;
       }
@@ -166,6 +166,14 @@ const Storyboard = () => {
       <div className="pt-32 pb-20 px-6">
         <div className="container mx-auto max-w-4xl">
           <div className="mb-12 text-center">
+            <div className="mb-6 px-6 py-4 bg-accent/10 border-2 border-accent rounded-lg">
+              <p className="text-2xl font-bold font-serif text-accent mb-2">
+                ⚠️ IMPORTANT: Storyboards Cost 2 Credits
+              </p>
+              <p className="text-base text-muted-foreground">
+                Storyboards are longer and more complex videos generated with Sora 2 Pro, requiring 2 credits per generation
+              </p>
+            </div>
             <h1 className="font-serif text-5xl font-bold mb-4">Create Storyboard</h1>
             <p className="text-xl text-muted-foreground">
               Visualize your narrative with AI-generated storyboards

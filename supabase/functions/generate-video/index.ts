@@ -55,19 +55,20 @@ serve(async (req) => {
     }
 
     // Check credits
+    const creditsRequired = video.model === "sora-2-pro-storyboard" ? 2 : 1;
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("credits")
       .eq("id", user.id)
       .single();
 
-    if (profileError || !profile || profile.credits <= 0) {
+    if (profileError || !profile || profile.credits < creditsRequired) {
       await supabase
         .from("videos")
         .update({ status: "fail" })
         .eq("id", videoId);
       
-      throw new Error("Insufficient credits");
+      throw new Error(`Insufficient credits (requires ${creditsRequired})`);
     }
 
     console.log("Creating Kie.ai task for video:", videoId);
@@ -75,27 +76,45 @@ serve(async (req) => {
     // Create task with Kie.ai
     const kiePayload: any = {
       model: video.model,
-      input: {
+      input: {} as any,
+    };
+
+    // Handle different model types
+    if (video.model === "sora-2-pro-storyboard") {
+      // Storyboard model requires shots array
+      kiePayload.input = {
+        shots: [
+          {
+            description: video.prompt,
+            duration: video.n_frames / 30, // Convert frames to seconds
+          }
+        ],
+        n_frames: video.n_frames,
+        aspect_ratio: video.aspect_ratio === "16:9" ? "landscape" : "portrait",
+      };
+
+      // Add reference images if provided
+      if (video.image_url) {
+        try {
+          const parsedUrls = JSON.parse(video.image_url);
+          if (Array.isArray(parsedUrls) && parsedUrls.length > 0) {
+            kiePayload.input.image_urls = parsedUrls;
+          }
+        } catch {
+          kiePayload.input.image_urls = [video.image_url];
+        }
+      }
+    } else {
+      // Standard text-to-video or image-to-video models
+      kiePayload.input = {
         prompt: video.prompt,
         aspectRatio: video.aspect_ratio,
         nFrames: video.n_frames,
         removeWatermark: video.remove_watermark,
-      },
-    };
+      };
 
-    // Handle image URLs for image-to-video and storyboard models
-    if (video.image_url) {
-      // Check if image_url is a JSON array (multiple images for storyboard)
-      try {
-        const parsedUrls = JSON.parse(video.image_url);
-        if (Array.isArray(parsedUrls) && parsedUrls.length > 0) {
-          kiePayload.input.image_urls = parsedUrls;
-        } else {
-          // Single image URL
-          kiePayload.input.image_urls = [video.image_url];
-        }
-      } catch {
-        // Not JSON, treat as single URL
+      // Handle image URLs for image-to-video models
+      if (video.image_url && video.model.includes("image-to-video")) {
         kiePayload.input.image_urls = [video.image_url];
       }
     }
