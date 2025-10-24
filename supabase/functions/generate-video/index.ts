@@ -141,7 +141,7 @@ serve(async (req) => {
       // Standard text-to-video or image-to-video models
       kiePayload.input = {
         prompt: video.prompt,
-        aspectRatio: video.aspect_ratio,
+        aspectRatio: video.aspect_ratio === "16:9" ? "landscape" : "portrait",
         nFrames: String(video.n_frames), // Kie.ai API expects string
         removeWatermark: video.remove_watermark,
       };
