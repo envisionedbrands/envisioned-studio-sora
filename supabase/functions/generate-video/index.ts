@@ -137,7 +137,7 @@ serve(async (req) => {
       kiePayload.input = {
         prompt: video.prompt,
         aspectRatio: video.aspect_ratio,
-        nFrames: video.n_frames,
+        nFrames: String(video.n_frames), // Kie.ai API expects string
         removeWatermark: video.remove_watermark,
       };
 
