@@ -145,7 +145,7 @@ const Create = () => {
         return;
       }
 
-      toast.success("Video generation started! Check your library in a few minutes.");
+      toast.success("Video generation started! Videos take a few minutes to generate — it will appear in your library when ready.");
       navigate("/library");
     } catch (error: any) {
       console.error("Error:", error);

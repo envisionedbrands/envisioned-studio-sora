@@ -170,53 +170,60 @@ const Library = () => {
                         {video.model} • {Math.round(video.n_frames / 30)}s
                       </div>
 
-                      {video.status === "success" && video.result_url && (
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleCopy(video.result_url!)}
-                            className="flex-1"
-                          >
-                            <Copy className="w-4 h-4 mr-1" />
-                            Copy
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            asChild
-                            className="flex-1"
-                          >
-                            <a href={video.result_url} download>
-                              <Download className="w-4 h-4 mr-1" />
-                              Download
-                            </a>
-                          </Button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button size="sm" variant="destructive">
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Delete video?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDelete(video.id)}
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      )}
+                      <div className="flex gap-2">
+                        {video.status === "success" && video.result_url && (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleCopy(video.result_url!)}
+                              className="flex-1"
+                            >
+                              <Copy className="w-4 h-4 mr-1" />
+                              Copy
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              asChild
+                              className="flex-1"
+                            >
+                              <a href={video.result_url} download>
+                                <Download className="w-4 h-4 mr-1" />
+                                Download
+                              </a>
+                            </Button>
+                          </>
+                        )}
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button 
+                              size="sm" 
+                              variant="destructive"
+                              className={video.status === "success" ? "" : "flex-1"}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                              {video.status !== "success" && <span className="ml-1">Delete</span>}
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete video?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDelete(video.id)}
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
