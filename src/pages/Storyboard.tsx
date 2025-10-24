@@ -180,7 +180,6 @@ const Storyboard = () => {
           aspect_ratio: aspectRatio,
           n_frames: totalDuration * 30,
           image_url: imageUrl,
-          remove_watermark: false,
           status: "pending",
         })
         .select()

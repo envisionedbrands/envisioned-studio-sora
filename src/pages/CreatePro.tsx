@@ -168,7 +168,6 @@ const CreatePro = () => {
           model,
           aspect_ratio: aspectRatio,
           n_frames: parseInt(duration) * 30,
-          remove_watermark: false, // Pro models don't have watermarks
           status: "pending",
           image_url: imageUrl,
         })

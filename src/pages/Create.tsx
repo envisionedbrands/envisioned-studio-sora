@@ -47,7 +47,6 @@ const Create = () => {
   const [model, setModel] = useState("sora-2-text-to-video");
   const [aspectRatio, setAspectRatio] = useState("16:9");
   const [duration, setDuration] = useState("10");
-  const [removeWatermark, setRemoveWatermark] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [promptHelperOpen, setPromptHelperOpen] = useState(false);
 
@@ -147,7 +146,6 @@ const Create = () => {
           aspect_ratio: aspectRatio,
           n_frames: parseInt(duration) * 30, // Approximate frames
           image_url: imageUrl,
-          remove_watermark: removeWatermark,
           status: "pending",
         })
         .select()
@@ -291,20 +289,6 @@ const Create = () => {
                       />
                     </div>
                   )}
-                </div>
-
-                <div className="flex items-center justify-between p-4 rounded-lg border">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="watermark">Remove Watermark</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Clean final output (Pro feature)
-                    </p>
-                  </div>
-                  <Switch
-                    id="watermark"
-                    checked={removeWatermark}
-                    onCheckedChange={setRemoveWatermark}
-                  />
                 </div>
 
                 <Button type="submit" className="w-full" size="lg" disabled={loading}>

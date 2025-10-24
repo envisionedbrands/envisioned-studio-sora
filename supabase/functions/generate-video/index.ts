@@ -149,11 +149,6 @@ serve(async (req) => {
         n_frames: String(durationInSeconds),
       };
 
-      // Only add removeWatermark for base models (not Pro)
-      if (!video.model.includes("pro")) {
-        kiePayload.input.removeWatermark = video.remove_watermark;
-      }
-
       // Handle image URLs for image-to-video models
       if (video.image_url && video.model.includes("image-to-video")) {
         kiePayload.input.image_urls = [video.image_url];
