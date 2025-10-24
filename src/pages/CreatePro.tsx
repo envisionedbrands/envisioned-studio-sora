@@ -221,7 +221,7 @@ const CreatePro = () => {
               <CardTitle className="text-2xl font-serif">Create Pro</CardTitle>
             </div>
             <CardDescription>
-              Generate professional videos with Sora 2 Pro models - no watermarks
+              Generate professional videos with Sora 2 Pro models
             </CardDescription>
           </CardHeader>
           <CardContent>
