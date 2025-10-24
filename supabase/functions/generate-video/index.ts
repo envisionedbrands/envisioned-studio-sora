@@ -133,9 +133,14 @@ serve(async (req) => {
       );
 
       const pollData = await pollResponse.json();
+      console.log("Full poll response:", JSON.stringify(pollData));
+      
       const state = pollData?.data?.state;
-
       console.log("Task state:", state);
+
+      if (!pollResponse.ok) {
+        console.error("Poll response not OK:", pollResponse.status, pollData);
+      }
 
       if (state === "success") {
         const resultJson = pollData.data.resultJson;
