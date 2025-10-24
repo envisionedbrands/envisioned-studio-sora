@@ -146,6 +146,9 @@ const Library = () => {
             <p className="text-xl text-muted-foreground">
               All your created videos in one place
             </p>
+            <p className="mt-6 text-sm font-bold font-mono text-muted-foreground">
+              Video rendering takes a while, don't worry it will appear here once ready.
+            </p>
           </div>
 
           {loading ? (
@@ -210,7 +213,10 @@ const Library = () => {
                               asChild
                               className="flex-1"
                             >
-                              <a href={video.result_url} download>
+                              <a 
+                                href={video.result_url} 
+                                download={`Envisioned Studio-${video.prompt.slice(0, 50).replace(/[^a-z0-9]/gi, '-')}.mp4`}
+                              >
                                 <Download className="w-4 h-4 mr-1" />
                                 Download
                               </a>
