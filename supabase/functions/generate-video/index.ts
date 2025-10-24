@@ -77,14 +77,14 @@ serve(async (req) => {
       model: video.model,
       input: {
         prompt: video.prompt,
-        aspect_ratio: video.aspect_ratio,
-        n_frames: video.n_frames,
-        remove_watermark: video.remove_watermark,
+        aspectRatio: video.aspect_ratio,
+        nFrames: video.n_frames,
+        removeWatermark: video.remove_watermark,
       },
     };
 
     if (video.image_url) {
-      kiePayload.input.image_urls = [video.image_url];
+      kiePayload.input.imageUrls = [video.image_url];
     }
 
     const createResponse = await fetch("https://api.kie.ai/api/v1/jobs/createTask", {
