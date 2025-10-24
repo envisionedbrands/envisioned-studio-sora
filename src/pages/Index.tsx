@@ -40,10 +40,6 @@ const Index = () => {
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-6">
         <div className="container mx-auto max-w-5xl text-center">
-          <div className="inline-block mb-6 px-4 py-2 bg-accent/10 rounded-full text-sm font-medium text-accent">
-            Powered by Sora 2 via Kie.ai
-          </div>
-          
           <h1 className="font-serif text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight">
             Envisioned Studio
             <br />
