@@ -176,7 +176,7 @@ const Create = () => {
             <CardHeader>
               <CardTitle className="font-serif text-2xl">Generation Settings</CardTitle>
               <CardDescription>Configure your video parameters</CardDescription>
-              <p className="mt-3 text-sm font-bold font-mono text-muted-foreground">
+              <p className="mt-8 text-sm font-bold font-mono text-muted-foreground">
                 ⚠️ Occasionally, a video may fail due to Sora's internal moderation policies — this isn't an app error, it's a platform restriction.
               </p>
             </CardHeader>
