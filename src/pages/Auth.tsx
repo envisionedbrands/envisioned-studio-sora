@@ -124,23 +124,31 @@ const Auth = () => {
 
   const handleGoogleSignIn = async () => {
     try {
+      console.log("Google sign-in clicked, invite code:", googleInviteCode);
+      
       // Validate invite code
       const validation = signUpSchema.shape.inviteCode.safeParse(googleInviteCode);
       if (!validation.success) {
+        console.error("Validation failed:", validation.error);
         toast.error(validation.error.errors[0].message);
         return;
       }
 
+      console.log("Validation passed, checking invite code...");
+      
       // Check if invite code is valid
       const { data: isValid, error: codeError } = await supabase.rpc('use_invite_code', {
         code_text: googleInviteCode.toUpperCase()
       });
+
+      console.log("Invite code check result:", { isValid, codeError });
 
       if (codeError || !isValid) {
         toast.error("Invalid or expired invite code");
         return;
       }
 
+      console.log("Starting OAuth flow...");
       setLoading(true);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -149,12 +157,15 @@ const Auth = () => {
         },
       });
 
+      console.log("OAuth result:", { error });
+
       if (error) {
         toast.error(error.message);
         setLoading(false);
       }
     } catch (error: any) {
-      toast.error(error.message);
+      console.error("Error in handleGoogleSignIn:", error);
+      toast.error(error.message || "An error occurred");
       setLoading(false);
     }
   };
