@@ -7,8 +7,15 @@ import { Session } from "@supabase/supabase-js";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Download, Trash2, Copy } from "lucide-react";
+import { Download, Trash2, Copy, BookmarkPlus, Bookmark, PlayCircle } from "lucide-react";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,6 +45,8 @@ const Library = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedPrompt, setSelectedPrompt] = useState<{ prompt: string; videoId: string } | null>(null);
+  const [savedPromptIds, setSavedPromptIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -62,6 +71,7 @@ const Library = () => {
   useEffect(() => {
     if (session?.user?.id) {
       fetchVideos();
+      fetchSavedPrompts();
       
       // Set up realtime subscription for video updates
       const channel = supabase
@@ -86,6 +96,17 @@ const Library = () => {
       };
     }
   }, [session]);
+
+  const fetchSavedPrompts = async () => {
+    const { data, error } = await supabase
+      .from("saved_prompts")
+      .select("source_video_id")
+      .eq("user_id", session?.user?.id);
+
+    if (!error && data) {
+      setSavedPromptIds(new Set(data.map(p => p.source_video_id).filter(Boolean)));
+    }
+  };
 
   const fetchVideos = async () => {
     setLoading(true);
@@ -118,6 +139,48 @@ const Library = () => {
   const handleCopy = (url: string) => {
     navigator.clipboard.writeText(url);
     toast.success("URL copied to clipboard");
+  };
+
+  const handleSavePrompt = async (videoId: string, prompt: string) => {
+    const isSaved = savedPromptIds.has(videoId);
+
+    if (isSaved) {
+      // Remove from saved prompts
+      const { error } = await supabase
+        .from("saved_prompts")
+        .delete()
+        .eq("source_video_id", videoId)
+        .eq("user_id", session?.user?.id);
+
+      if (error) {
+        toast.error("Failed to remove prompt");
+      } else {
+        toast.success("Prompt removed from library");
+        fetchSavedPrompts();
+      }
+    } else {
+      // Save prompt
+      const { error } = await supabase
+        .from("saved_prompts")
+        .insert({
+          user_id: session?.user?.id!,
+          prompt,
+          source_video_id: videoId,
+          title: prompt.slice(0, 100),
+        });
+
+      if (error) {
+        toast.error("Failed to save prompt");
+      } else {
+        toast.success("Prompt saved to library");
+        fetchSavedPrompts();
+      }
+    }
+  };
+
+  const handleRemix = (prompt: string) => {
+    // Navigate to create page with the prompt pre-filled
+    navigate("/create", { state: { prompt } });
   };
 
   const getStatusColor = (status: string) => {
@@ -187,7 +250,12 @@ const Library = () => {
 
                     <div className="p-4 space-y-3">
                       <div className="flex items-start justify-between gap-2">
-                        <p className="text-sm line-clamp-2 flex-1">{video.prompt}</p>
+                        <p 
+                          className="text-sm line-clamp-2 flex-1 cursor-pointer hover:text-primary transition-colors"
+                          onClick={() => setSelectedPrompt({ prompt: video.prompt, videoId: video.id })}
+                        >
+                          {video.prompt}
+                        </p>
                         <Badge variant="outline" className="shrink-0">
                           {video.aspect_ratio}
                         </Badge>
@@ -201,6 +269,30 @@ const Library = () => {
 
                       <div className="text-xs text-muted-foreground">
                         {video.model} • {Math.round(video.n_frames / 30)}s
+                      </div>
+
+                      <div className="flex gap-2 flex-wrap">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleSavePrompt(video.id, video.prompt)}
+                          className="flex-1"
+                        >
+                          {savedPromptIds.has(video.id) ? (
+                            <><Bookmark className="w-4 h-4 mr-1 fill-current" /> Saved</>
+                          ) : (
+                            <><BookmarkPlus className="w-4 h-4 mr-1" /> Save</>
+                          )}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleRemix(video.prompt)}
+                          className="flex-1"
+                        >
+                          <PlayCircle className="w-4 h-4 mr-1" />
+                          Remix
+                        </Button>
                       </div>
 
                       <div className="flex gap-2">
@@ -268,6 +360,49 @@ const Library = () => {
           )}
         </div>
       </div>
+
+      <Dialog open={!!selectedPrompt} onOpenChange={() => setSelectedPrompt(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Full Prompt</DialogTitle>
+            <DialogDescription className="sr-only">
+              View the complete prompt text
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm leading-relaxed">{selectedPrompt?.prompt}</p>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  if (selectedPrompt) {
+                    handleSavePrompt(selectedPrompt.videoId, selectedPrompt.prompt);
+                  }
+                }}
+                className="flex-1"
+              >
+                {selectedPrompt && savedPromptIds.has(selectedPrompt.videoId) ? (
+                  <><Bookmark className="w-4 h-4 mr-2 fill-current" /> Saved to Library</>
+                ) : (
+                  <><BookmarkPlus className="w-4 h-4 mr-2" /> Save to Library</>
+                )}
+              </Button>
+              <Button
+                onClick={() => {
+                  if (selectedPrompt) {
+                    handleRemix(selectedPrompt.prompt);
+                    setSelectedPrompt(null);
+                  }
+                }}
+                className="flex-1"
+              >
+                <PlayCircle className="w-4 h-4 mr-2" />
+                Remix
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>
