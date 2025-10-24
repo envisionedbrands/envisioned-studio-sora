@@ -124,6 +124,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_user_limit: { Args: never; Returns: boolean }
       use_invite_code: { Args: { code_text: string }; Returns: boolean }
     }
     Enums: {

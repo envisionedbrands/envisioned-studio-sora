@@ -43,7 +43,16 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Validate invite code first
+    // Check if user limit is reached
+    const { data: canSignUp, error: limitError } = await supabase.rpc('check_user_limit');
+
+    if (limitError || !canSignUp) {
+      setLoading(false);
+      toast.error("Registration is currently closed. The maximum number of users has been reached.");
+      return;
+    }
+
+    // Validate invite code
     const { data: isValid, error: codeError } = await supabase.rpc('use_invite_code', {
       code_text: inviteCode.trim()
     });
