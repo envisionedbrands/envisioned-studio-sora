@@ -114,20 +114,39 @@ const Create = () => {
       }
 
       // Create video record
-      const { error: insertError } = await supabase.from("videos").insert({
-        user_id: session.user.id,
-        model,
-        prompt,
-        aspect_ratio: aspectRatio,
-        n_frames: parseInt(duration) * 30, // Approximate frames
-        image_url: imageUrl,
-        remove_watermark: removeWatermark,
-        status: "pending",
-      });
+      const { data: videoData, error: insertError } = await supabase
+        .from("videos")
+        .insert({
+          user_id: session.user.id,
+          model,
+          prompt,
+          aspect_ratio: aspectRatio,
+          n_frames: parseInt(duration) * 30, // Approximate frames
+          image_url: imageUrl,
+          remove_watermark: removeWatermark,
+          status: "pending",
+        })
+        .select()
+        .single();
 
-      if (insertError) throw insertError;
+      if (insertError || !videoData) throw insertError;
 
-      toast.success("Video generation started! Check your library.");
+      // Call Cloud Function to start generation
+      const { error: functionError } = await supabase.functions.invoke(
+        "generate-video",
+        {
+          body: { videoId: videoData.id },
+        }
+      );
+
+      if (functionError) {
+        console.error("Function error:", functionError);
+        toast.error("Failed to start generation");
+        setLoading(false);
+        return;
+      }
+
+      toast.success("Video generation started! Check your library in a few minutes.");
       navigate("/library");
     } catch (error: any) {
       console.error("Error:", error);
