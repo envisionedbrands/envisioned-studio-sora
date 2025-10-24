@@ -168,10 +168,10 @@ const Storyboard = () => {
           <div className="mb-12 text-center">
             <div className="mb-6 px-6 py-4 bg-accent/10 border-2 border-accent rounded-lg">
               <p className="text-2xl font-bold font-serif text-accent mb-2">
-                ⚠️ IMPORTANT: Storyboards Cost 2 Credits
+                ⚠️ IMPORTANT: Storyboards is a Pro Feature
               </p>
               <p className="text-base text-muted-foreground">
-                Storyboards are longer and more complex videos generated with Sora 2 Pro, requiring 2 credits per generation
+                It uses Sora Pro model — for testing it uses 2 credits
               </p>
             </div>
             <h1 className="font-serif text-5xl font-bold mb-4">Create Storyboard</h1>
