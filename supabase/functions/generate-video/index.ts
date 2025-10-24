@@ -54,7 +54,7 @@ serve(async (req) => {
       throw new Error("Video not found");
     }
 
-    // Check credits
+    // Check credits and deduct immediately to prevent race condition
     const creditsRequired = video.model === "sora-2-pro-storyboard" ? 2 : 1;
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
@@ -70,6 +70,24 @@ serve(async (req) => {
       
       throw new Error(`Insufficient credits (requires ${creditsRequired})`);
     }
+
+    // SECURITY FIX: Deduct credits immediately using optimistic locking
+    const { error: deductError } = await supabase
+      .from("profiles")
+      .update({ credits: profile.credits - creditsRequired })
+      .eq("id", user.id)
+      .eq("credits", profile.credits); // Atomic check to prevent race condition
+
+    if (deductError) {
+      console.error('Credit deduction failed:', deductError);
+      await supabase
+        .from("videos")
+        .update({ status: "fail" })
+        .eq("id", videoId);
+      throw new Error('Credit deduction failed. Please try again.');
+    }
+
+    console.log(`Credits deducted: ${creditsRequired} credits from user ${user.id}`);
 
     console.log("Creating Kie.ai task for video:", videoId);
 

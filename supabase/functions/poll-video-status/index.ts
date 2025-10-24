@@ -84,6 +84,7 @@ serve(async (req) => {
           console.log(`Video ${video.id} completed successfully, URL: ${resultUrl}`);
 
           // Update video to success
+          // Note: Credits were already deducted in generate-video function
           await supabase
             .from("videos")
             .update({
@@ -92,20 +93,6 @@ serve(async (req) => {
               updated_at: new Date().toISOString(),
             })
             .eq("id", video.id);
-
-          // Deduct credit from user
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("credits")
-            .eq("id", video.user_id)
-            .single();
-
-          if (profile && profile.credits > 0) {
-            await supabase
-              .from("profiles")
-              .update({ credits: profile.credits - 1 })
-              .eq("id", video.user_id);
-          }
 
           results.push({ videoId: video.id, status: "success" });
         } else if (state === "fail") {

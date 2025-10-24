@@ -18,6 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Session } from "@supabase/supabase-js";
 import { Loader2 } from "lucide-react";
+import { videoGenerationSchema } from "@/lib/validations";
 
 const MODELS = [
   { value: "sora-2-text-to-video", label: "Sora 2 - Text to Video (Base)" },
@@ -73,6 +74,19 @@ const Create = () => {
     
     if (!session?.user?.id) {
       toast.error("Please sign in to create videos");
+      return;
+    }
+
+    // Validate inputs
+    const validation = videoGenerationSchema.safeParse({
+      prompt,
+      model,
+      aspectRatio,
+      duration,
+    });
+
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
       return;
     }
 

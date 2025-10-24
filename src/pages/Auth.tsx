@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import Navigation from "@/components/Navigation";
 import { Session } from "@supabase/supabase-js";
+import { signUpSchema, signInSchema } from "@/lib/validations";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -43,6 +44,14 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
 
+    // Validate inputs
+    const validation = signUpSchema.safeParse({ name, email, password, inviteCode });
+    if (!validation.success) {
+      setLoading(false);
+      toast.error(validation.error.errors[0].message);
+      return;
+    }
+
     // Check if user limit is reached
     const { data: canSignUp, error: limitError } = await supabase.rpc('check_user_limit');
 
@@ -54,7 +63,7 @@ const Auth = () => {
 
     // Validate invite code
     const { data: isValid, error: codeError } = await supabase.rpc('use_invite_code', {
-      code_text: inviteCode.trim()
+      code_text: validation.data.inviteCode
     });
 
     if (codeError || !isValid) {
@@ -64,11 +73,11 @@ const Auth = () => {
     }
 
     const { error } = await supabase.auth.signUp({
-      email,
-      password,
+      email: validation.data.email,
+      password: validation.data.password,
       options: {
         data: {
-          name,
+          name: validation.data.name,
         },
         emailRedirectTo: `${window.location.origin}/`,
       },
@@ -87,9 +96,17 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
 
+    // Validate inputs
+    const validation = signInSchema.safeParse({ email, password });
+    if (!validation.success) {
+      setLoading(false);
+      toast.error(validation.error.errors[0].message);
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+      email: validation.data.email,
+      password: validation.data.password,
     });
 
     setLoading(false);

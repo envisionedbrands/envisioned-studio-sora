@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Session } from "@supabase/supabase-js";
 import { Loader2 } from "lucide-react";
+import { storyboardSchema } from "@/lib/validations";
 
 const ASPECT_RATIOS = [
   { value: "16:9", label: "Landscape (16:9)" },
@@ -63,6 +64,18 @@ const Storyboard = () => {
     
     if (!session?.user?.id) {
       toast.error("Please sign in to create storyboards");
+      return;
+    }
+
+    // Validate inputs
+    const validation = storyboardSchema.safeParse({
+      prompt,
+      aspectRatio,
+      duration,
+    });
+
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
       return;
     }
 
