@@ -79,7 +79,7 @@ const Navigation = () => {
               </Link>
               <Link to="/storyboard">
                 <Button variant="ghost" size="sm" className="hidden lg:inline-flex">
-                  Storyboard (Coming Soon)
+                  Storyboard
                 </Button>
               </Link>
               <Link to="/library">
@@ -124,7 +124,7 @@ const Navigation = () => {
                   </Link>
                   <Link to="/storyboard" onClick={handleNavClick}>
                     <Button variant="ghost" className="w-full justify-start">
-                      Storyboard (Coming Soon)
+                      Storyboard
                     </Button>
                   </Link>
                   <Link to="/library" onClick={handleNavClick}>
