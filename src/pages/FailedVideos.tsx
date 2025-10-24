@@ -8,7 +8,7 @@ const FailedVideos = () => {
       <main className="container mx-auto px-4 md:px-6 pt-24 pb-16">
         <article className="max-w-4xl mx-auto prose prose-invert">
           <h1 className="text-4xl md:text-5xl font-serif font-bold mb-8 text-foreground">
-            Possible Reasons for Sora 2 Video Generation Failures
+            Videos Failing? Read
           </h1>
 
           <section className="mb-12">
@@ -112,6 +112,15 @@ const FailedVideos = () => {
                 </h3>
                 <p className="text-muted-foreground leading-relaxed">
                   Sora 2 attempts to synchronize video length with prompt content. If the prompt implies a lengthy sequence but the requested video duration (or allowed duration) is very short, it may fail to render properly or truncate unexpectedly. For instance, feeding a multi-paragraph story as a prompt for a 5-second clip can overload the system's ability to allocate scenes/timing. While this might not always produce an outright error, it often results in a generation failure or an incomplete video. Prompting guides advise breaking up long sequences into smaller segments for this reason.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-semibold mb-3 text-foreground">
+                  Non-Plain Text Formatting
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  <strong>Critical:</strong> Sora 2 requires prompts to be pure plain text. Any hidden formatting, special characters, or markup copied from LLMs (like ChatGPT, Claude, etc.) can cause generation to fail. When copying prompts from AI assistants or formatted documents, the text may contain invisible formatting codes, markdown syntax, or special Unicode characters that Sora 2 cannot process. <strong>Solution:</strong> Always ask your LLM to return plain text only, or paste prompts into a plain text editor first (like Notepad) to strip all formatting before submitting to Sora 2. Even seemingly invisible formatting can be the difference between success and failure.
                 </p>
               </div>
             </div>
