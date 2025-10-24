@@ -206,7 +206,7 @@ const Library = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      <SidebarProvider>
+      <SidebarProvider defaultOpen={false}>
         <div className="flex w-full min-h-screen">
           {session?.user?.id && (
             <PromptLibrarySidebar
@@ -220,13 +220,19 @@ const Library = () => {
             <div className="pt-32 pb-20 px-6">
               <div className="container mx-auto max-w-7xl">
                 <div className="mb-6 flex items-center gap-3">
-                  <SidebarTrigger>
+                  <SidebarTrigger className="lg:hidden">
                     <Button variant="outline" size="icon">
                       <PanelLeft className="h-4 w-4" />
                     </Button>
                   </SidebarTrigger>
+                  <SidebarTrigger className="hidden lg:flex">
+                    <Button variant="outline" size="sm">
+                      <PanelLeft className="h-4 w-4 mr-2" />
+                      Prompt Library
+                    </Button>
+                  </SidebarTrigger>
                   <div>
-                    <h1 className="font-serif text-5xl font-bold">Your Library</h1>
+                    <h1 className="font-serif text-4xl lg:text-5xl font-bold">Your Library</h1>
                   </div>
                 </div>
                 <div className="mb-12">

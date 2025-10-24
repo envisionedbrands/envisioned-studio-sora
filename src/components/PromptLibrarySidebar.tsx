@@ -75,28 +75,30 @@ export function PromptLibrarySidebar({ userId, onSelectPrompt, onDeletePrompt }:
   );
 
   return (
-    <Sidebar className="border-r">
+    <Sidebar className="border-r" collapsible="offcanvas">
       <SidebarHeader className="p-4 border-b">
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-2">
           <BookmarkCheck className="w-5 h-5" />
           <h2 className="font-semibold">Prompt Library</h2>
-        </div>
-        <div className="relative">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search prompts..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-8"
-          />
         </div>
       </SidebarHeader>
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>
+          <SidebarGroupLabel className="px-4 py-2">
             {filteredPrompts.length} {filteredPrompts.length === 1 ? "Prompt" : "Prompts"}
           </SidebarGroupLabel>
+          <div className="px-4 pb-3">
+            <div className="relative">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search prompts..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+          </div>
           <SidebarGroupContent>
             <ScrollArea className="h-[calc(100vh-220px)]">
               {loading ? (
