@@ -145,8 +145,8 @@ serve(async (req) => {
       
       kiePayload.input = {
         prompt: video.prompt,
-        aspectRatio: video.aspect_ratio === "16:9" ? "landscape" : "portrait",
-        nFrames: String(durationInSeconds),
+        aspect_ratio: video.aspect_ratio === "16:9" ? "landscape" : "portrait",
+        n_frames: String(durationInSeconds),
       };
 
       // Only add removeWatermark for base models (not Pro)
