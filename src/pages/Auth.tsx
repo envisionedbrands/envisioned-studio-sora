@@ -17,6 +17,7 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -41,6 +42,17 @@ const Auth = () => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    // Validate invite code first
+    const { data: isValid, error: codeError } = await supabase.rpc('use_invite_code', {
+      code_text: inviteCode.trim()
+    });
+
+    if (codeError || !isValid) {
+      setLoading(false);
+      toast.error("Invalid or expired invite code. Please check your code and try again.");
+      return;
+    }
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -139,7 +151,7 @@ const Auth = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="font-serif text-2xl">Create Account</CardTitle>
-                  <CardDescription>Start with 2 free credits</CardDescription>
+                  <CardDescription>Start with 5 free credits</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <form onSubmit={handleSignUp} className="space-y-4">
@@ -174,6 +186,17 @@ const Auth = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         minLength={6}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="invite-code">Invite Code</Label>
+                      <Input
+                        id="invite-code"
+                        type="text"
+                        placeholder="Enter your invite code"
+                        value={inviteCode}
+                        onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                        required
                       />
                     </div>
                     <Button type="submit" className="w-full" disabled={loading}>
