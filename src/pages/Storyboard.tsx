@@ -36,7 +36,7 @@ const Storyboard = () => {
   const [prompt, setPrompt] = useState("");
   const [aspectRatio, setAspectRatio] = useState("16:9");
   const [duration, setDuration] = useState("10");
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -84,22 +84,32 @@ const Storyboard = () => {
 
       let imageUrl = null;
 
-      // Upload reference image if provided
-      if (imageFile) {
-        const fileExt = imageFile.name.split(".").pop();
-        const fileName = `${session.user.id}/${Date.now()}.${fileExt}`;
+      // Upload reference images if provided
+      if (imageFiles.length > 0) {
+        const uploadedUrls: string[] = [];
+        
+        for (const file of imageFiles) {
+          const fileExt = file.name.split(".").pop();
+          const fileName = `${session.user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
 
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("video-inputs")
-          .upload(fileName, imageFile);
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from("video-inputs")
+            .upload(fileName, file);
 
-        if (uploadError) throw uploadError;
+          if (uploadError) {
+            console.error("Upload error:", uploadError);
+            continue; // Skip this file but continue with others
+          }
 
-        const { data: { publicUrl } } = supabase.storage
-          .from("video-inputs")
-          .getPublicUrl(uploadData.path);
+          const { data: { publicUrl } } = supabase.storage
+            .from("video-inputs")
+            .getPublicUrl(uploadData.path);
 
-        imageUrl = publicUrl;
+          uploadedUrls.push(publicUrl);
+        }
+
+        // Store multiple URLs as JSON string
+        imageUrl = uploadedUrls.length > 0 ? JSON.stringify(uploadedUrls) : null;
       }
 
       // Create video record with storyboard model
@@ -189,16 +199,22 @@ const Storyboard = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="image">Reference Image (Optional)</Label>
+                  <Label htmlFor="images">Reference Images (Optional)</Label>
                   <Input
-                    id="image"
+                    id="images"
                     type="file"
                     accept="image/*"
-                    onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                    multiple
+                    onChange={(e) => setImageFiles(e.target.files ? Array.from(e.target.files) : [])}
                   />
                   <p className="text-sm text-muted-foreground">
-                    Upload a reference image to guide the storyboard style
+                    Upload multiple reference images to guide the storyboard style
                   </p>
+                  {imageFiles.length > 0 && (
+                    <p className="text-sm font-medium text-accent">
+                      {imageFiles.length} image{imageFiles.length !== 1 ? 's' : ''} selected
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
