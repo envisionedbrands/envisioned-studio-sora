@@ -14,10 +14,11 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import PromptHelperDialog from "@/components/PromptHelperDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Session } from "@supabase/supabase-js";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Loader2, Plus, Trash2, Sparkles } from "lucide-react";
 
 interface Scene {
   id: string;
@@ -46,6 +47,7 @@ const Storyboard = () => {
   const [aspectRatio, setAspectRatio] = useState("16:9");
   const [totalDuration, setTotalDuration] = useState(10);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [promptHelperOpen, setPromptHelperOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -300,11 +302,22 @@ const Storyboard = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-4">
                     <Label className="text-lg">Scenes (Total Duration: {totalDuration}s)</Label>
-                    <span className={`text-sm font-medium ${getRemainingDuration() === 0 ? 'text-green-600' : 'text-orange-600'}`}>
-                      Remaining: {getRemainingDuration().toFixed(1)}s
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPromptHelperOpen(true)}
+                      >
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        AI Scene Helper
+                      </Button>
+                      <span className={`text-sm font-medium ${getRemainingDuration() === 0 ? 'text-green-600' : 'text-orange-600'}`}>
+                        Remaining: {getRemainingDuration().toFixed(1)}s
+                      </span>
+                    </div>
                   </div>
 
                   {scenes.map((scene, index) => (
@@ -387,6 +400,21 @@ const Storyboard = () => {
       </div>
 
       <Footer />
+      
+      <PromptHelperDialog
+        open={promptHelperOpen}
+        onOpenChange={setPromptHelperOpen}
+        onApplyPrompt={() => {}}
+        mode="scenes"
+        onApplyScenes={(generatedScenes) => {
+          setScenes(generatedScenes.map((scene, index) => ({
+            id: Date.now().toString() + index,
+            description: scene.description,
+            duration: scene.duration
+          })));
+          setPromptHelperOpen(false);
+        }}
+      />
     </div>
   );
 };

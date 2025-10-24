@@ -12,3 +12,6 @@ schedule = "*/2 * * * *"
 
 [functions.improve-prompt]
 verify_jwt = false
+
+[functions.split-prompt]
+verify_jwt = false

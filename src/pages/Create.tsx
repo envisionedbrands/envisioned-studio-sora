@@ -15,10 +15,11 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import PromptHelperDialog from "@/components/PromptHelperDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Session } from "@supabase/supabase-js";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import { videoGenerationSchema } from "@/lib/validations";
 
 const MODELS = [
@@ -49,6 +50,7 @@ const Create = () => {
   const [duration, setDuration] = useState("10");
   const [removeWatermark, setRemoveWatermark] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [promptHelperOpen, setPromptHelperOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -198,7 +200,18 @@ const Create = () => {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="prompt">Prompt *</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="prompt">Prompt *</Label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPromptHelperOpen(true)}
+                    >
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      AI Helper
+                    </Button>
+                  </div>
                   <Textarea
                     id="prompt"
                     placeholder="Describe your video in detail..."
@@ -303,6 +316,16 @@ const Create = () => {
       </div>
 
       <Footer />
+      
+      <PromptHelperDialog
+        open={promptHelperOpen}
+        onOpenChange={setPromptHelperOpen}
+        onApplyPrompt={(improvedPrompt) => {
+          setPrompt(improvedPrompt);
+          setPromptHelperOpen(false);
+        }}
+        mode="single"
+      />
     </div>
   );
 };
