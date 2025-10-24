@@ -117,7 +117,7 @@ serve(async (req) => {
             duration: video.n_frames / 30, // Convert frames to seconds
           }
         ],
-        n_frames: String(video.n_frames), // Kie.ai API expects string
+        n_frames: String(video.n_frames / 30), // Convert frames to seconds: "10", "15", or "25"
         aspect_ratio: video.aspect_ratio === "16:9" ? "landscape" : "portrait",
       };
 
