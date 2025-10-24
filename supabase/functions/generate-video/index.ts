@@ -139,10 +139,13 @@ serve(async (req) => {
       }
     } else {
       // Standard text-to-video or image-to-video models
+      // Convert frames back to seconds for the API
+      const durationInSeconds = Math.round(video.n_frames / 30);
+      
       kiePayload.input = {
         prompt: video.prompt,
         aspectRatio: video.aspect_ratio === "16:9" ? "landscape" : "portrait",
-        nFrames: String(video.n_frames), // Kie.ai API expects string
+        nFrames: String(durationInSeconds), // API expects duration in seconds as string
         removeWatermark: video.remove_watermark,
       };
 
