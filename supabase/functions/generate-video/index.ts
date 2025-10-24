@@ -83,9 +83,9 @@ serve(async (req) => {
       },
     };
 
-    // Only add image_url at top level for image-to-video models
+    // Add image_urls array inside input for image-to-video models
     if (video.image_url && video.model.includes("image-to-video")) {
-      kiePayload.image_url = video.image_url;
+      kiePayload.input.image_urls = [video.image_url];
     }
 
     const createResponse = await fetch("https://api.kie.ai/api/v1/jobs/createTask", {
