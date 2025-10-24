@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -35,6 +36,7 @@ const Storyboard = () => {
   const [prompt, setPrompt] = useState("");
   const [aspectRatio, setAspectRatio] = useState("16:9");
   const [duration, setDuration] = useState("10");
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -80,6 +82,26 @@ const Storyboard = () => {
         return;
       }
 
+      let imageUrl = null;
+
+      // Upload reference image if provided
+      if (imageFile) {
+        const fileExt = imageFile.name.split(".").pop();
+        const fileName = `${session.user.id}/${Date.now()}.${fileExt}`;
+
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("video-inputs")
+          .upload(fileName, imageFile);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from("video-inputs")
+          .getPublicUrl(uploadData.path);
+
+        imageUrl = publicUrl;
+      }
+
       // Create video record with storyboard model
       const { data: videoData, error: insertError } = await supabase
         .from("videos")
@@ -89,6 +111,7 @@ const Storyboard = () => {
           prompt,
           aspect_ratio: aspectRatio,
           n_frames: parseInt(duration) * 30,
+          image_url: imageUrl,
           remove_watermark: false,
           status: "pending",
         })
@@ -162,6 +185,19 @@ const Storyboard = () => {
                   />
                   <p className="text-sm text-muted-foreground">
                     Describe the sequence of scenes or narrative arc you want to visualize
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="image">Reference Image (Optional)</Label>
+                  <Input
+                    id="image"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Upload a reference image to guide the storyboard style
                   </p>
                 </div>
 
