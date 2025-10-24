@@ -42,7 +42,7 @@ const Privacy = () => {
               <p className="text-foreground/90 mb-3">We rely on:</p>
               <ul className="list-disc pl-6 space-y-2 text-foreground/90">
                 <li><strong>Lovable / Supabase</strong> – hosting, authentication, and data storage</li>
-                <li><strong>Sora / Kie.ai</strong> – video and storyboard generation</li>
+                <li><strong>Sora</strong> – video and storyboard generation</li>
                 <li><strong>Google Cloud</strong> – optional login and infrastructure services</li>
               </ul>
               <p className="text-foreground/90 mt-3">
