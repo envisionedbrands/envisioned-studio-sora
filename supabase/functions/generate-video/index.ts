@@ -83,9 +83,21 @@ serve(async (req) => {
       },
     };
 
-    // Add image_urls array inside input for image-to-video models
-    if (video.image_url && video.model.includes("image-to-video")) {
-      kiePayload.input.image_urls = [video.image_url];
+    // Handle image URLs for image-to-video and storyboard models
+    if (video.image_url) {
+      // Check if image_url is a JSON array (multiple images for storyboard)
+      try {
+        const parsedUrls = JSON.parse(video.image_url);
+        if (Array.isArray(parsedUrls) && parsedUrls.length > 0) {
+          kiePayload.input.image_urls = parsedUrls;
+        } else {
+          // Single image URL
+          kiePayload.input.image_urls = [video.image_url];
+        }
+      } catch {
+        // Not JSON, treat as single URL
+        kiePayload.input.image_urls = [video.image_url];
+      }
     }
 
     const createResponse = await fetch("https://api.kie.ai/api/v1/jobs/createTask", {
