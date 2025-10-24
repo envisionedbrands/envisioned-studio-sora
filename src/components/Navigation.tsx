@@ -85,6 +85,9 @@ const Navigation = () => {
               <Link to="/library">
                 <Button variant="ghost" size="sm">Library</Button>
               </Link>
+              <Link to="/failed-videos">
+                <Button variant="ghost" size="sm">Help</Button>
+              </Link>
               <Link to="/account">
                 <Button variant="ghost" size="icon">
                   <User className="w-5 h-5" />
@@ -130,6 +133,11 @@ const Navigation = () => {
                   <Link to="/library" onClick={handleNavClick}>
                     <Button variant="ghost" className="w-full justify-start">
                       Library
+                    </Button>
+                  </Link>
+                  <Link to="/failed-videos" onClick={handleNavClick}>
+                    <Button variant="ghost" className="w-full justify-start">
+                      Help
                     </Button>
                   </Link>
                   <Link to="/account" onClick={handleNavClick}>
