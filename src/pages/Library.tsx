@@ -161,21 +161,39 @@ const Library = () => {
         fetchSavedPrompts();
       }
     } else {
-      // Save prompt
-      const { error } = await supabase
-        .from("saved_prompts")
-        .insert({
-          user_id: session?.user?.id!,
-          prompt,
-          source_video_id: videoId,
-          title: prompt.slice(0, 100),
-        });
+      // Categorize the prompt first
+      toast.loading("Categorizing prompt...", { id: "categorize" });
+      
+      try {
+        const { data: categoryData, error: categoryError } = await supabase.functions.invoke(
+          'categorize-prompt',
+          { body: { prompt } }
+        );
 
-      if (error) {
-        toast.error("Failed to save prompt");
-      } else {
-        toast.success("Prompt saved to library");
-        fetchSavedPrompts();
+        const category = categoryError ? 'Uncategorized' : (categoryData?.category || 'Uncategorized');
+        
+        // Save prompt with category
+        const { error } = await supabase
+          .from("saved_prompts")
+          .insert({
+            user_id: session?.user?.id!,
+            prompt,
+            source_video_id: videoId,
+            title: prompt.slice(0, 100),
+            category,
+          });
+
+        toast.dismiss("categorize");
+
+        if (error) {
+          toast.error("Failed to save prompt");
+        } else {
+          toast.success(`Prompt saved to ${category}`);
+          fetchSavedPrompts();
+        }
+      } catch (err) {
+        toast.dismiss("categorize");
+        toast.error("Failed to categorize prompt");
       }
     }
   };

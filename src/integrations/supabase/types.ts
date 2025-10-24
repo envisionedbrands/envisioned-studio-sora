@@ -73,6 +73,7 @@ export type Database = {
       }
       saved_prompts: {
         Row: {
+          category: string | null
           created_at: string
           id: string
           prompt: string
@@ -81,6 +82,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          category?: string | null
           created_at?: string
           id?: string
           prompt: string
@@ -89,6 +91,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          category?: string | null
           created_at?: string
           id?: string
           prompt?: string

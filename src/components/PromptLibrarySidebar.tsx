@@ -20,6 +20,7 @@ interface SavedPrompt {
   title: string | null;
   created_at: string;
   source_video_id: string | null;
+  category: string;
 }
 
 interface PromptLibrarySidebarProps {
@@ -71,8 +72,21 @@ export function PromptLibrarySidebar({ userId, onSelectPrompt, onDeletePrompt }:
 
   const filteredPrompts = prompts.filter((p) =>
     p.prompt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.title?.toLowerCase().includes(searchQuery.toLowerCase())
+    p.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    p.category?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Group prompts by category
+  const groupedPrompts = filteredPrompts.reduce((acc, prompt) => {
+    const category = prompt.category || 'Uncategorized';
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(prompt);
+    return acc;
+  }, {} as Record<string, SavedPrompt[]>);
+
+  const categories = Object.keys(groupedPrompts).sort();
 
   return (
     <Sidebar className="border-r" collapsible="offcanvas">
@@ -110,36 +124,43 @@ export function PromptLibrarySidebar({ userId, onSelectPrompt, onDeletePrompt }:
                   {searchQuery ? "No prompts found" : "No saved prompts yet"}
                 </div>
               ) : (
-                <div className="space-y-2 p-2">
-                  {filteredPrompts.map((prompt) => (
-                    <div
-                      key={prompt.id}
-                      className="group p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
-                    >
-                      <p className="text-sm line-clamp-3 mb-2">
-                        {prompt.prompt}
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          onClick={() => onSelectPrompt(prompt.prompt)}
-                          className="flex-1 text-xs"
+                <div className="space-y-4 p-2">
+                  {categories.map((category) => (
+                    <div key={category} className="space-y-2">
+                      <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">
+                        {category} ({groupedPrompts[category].length})
+                      </h3>
+                      {groupedPrompts[category].map((prompt) => (
+                        <div
+                          key={prompt.id}
+                          className="group p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
                         >
-                          Use Prompt
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleDelete(prompt.id)}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-2">
-                        {new Date(prompt.created_at).toLocaleDateString()}
-                      </p>
+                          <p className="text-sm line-clamp-3 mb-2">
+                            {prompt.prompt}
+                          </p>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => onSelectPrompt(prompt.prompt)}
+                              className="flex-1 text-xs"
+                            >
+                              Use Prompt
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleDelete(prompt.id)}
+                              className="opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-2">
+                            {new Date(prompt.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      ))}
                     </div>
                   ))}
                 </div>
