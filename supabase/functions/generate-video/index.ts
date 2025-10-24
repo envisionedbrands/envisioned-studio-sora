@@ -145,7 +145,7 @@ serve(async (req) => {
       
       kiePayload.input = {
         prompt: video.prompt,
-        aspectRatio: video.aspect_ratio,
+        aspectRatio: video.aspect_ratio === "16:9" ? "landscape" : "portrait",
         nFrames: String(durationInSeconds),
       };
 
