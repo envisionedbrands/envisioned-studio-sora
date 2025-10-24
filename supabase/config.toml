@@ -9,3 +9,6 @@ verify_jwt = false
 [functions.poll-video-status.cron]
 # Run every 2 minutes to check video generation status
 schedule = "*/2 * * * *"
+
+[functions.improve-prompt]
+verify_jwt = false

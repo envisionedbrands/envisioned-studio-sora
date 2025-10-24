@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Create from "./pages/Create";
 import Storyboard from "./pages/Storyboard";
+import PromptHelper from "./pages/PromptHelper";
 import Library from "./pages/Library";
 import Account from "./pages/Account";
 import Terms from "./pages/Terms";
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/create" element={<Create />} />
           <Route path="/storyboard" element={<Storyboard />} />
+          <Route path="/prompt-helper" element={<PromptHelper />} />
           <Route path="/library" element={<Library />} />
           <Route path="/account" element={<Account />} />
           <Route path="/terms" element={<Terms />} />

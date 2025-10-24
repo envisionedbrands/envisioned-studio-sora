@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Film, User, Menu, X } from "lucide-react";
+import { Film, User, Menu, X, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
@@ -82,6 +82,12 @@ const Navigation = () => {
                   Storyboard (Coming Soon)
                 </Button>
               </Link>
+              <Link to="/prompt-helper">
+                <Button variant="ghost" size="sm" className="hidden lg:inline-flex">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Prompt Helper
+                </Button>
+              </Link>
               <Link to="/library">
                 <Button variant="ghost" size="sm">Library</Button>
               </Link>
@@ -125,6 +131,12 @@ const Navigation = () => {
                   <Link to="/storyboard" onClick={handleNavClick}>
                     <Button variant="ghost" className="w-full justify-start">
                       Storyboard (Coming Soon)
+                    </Button>
+                  </Link>
+                  <Link to="/prompt-helper" onClick={handleNavClick}>
+                    <Button variant="ghost" className="w-full justify-start">
+                      <Sparkles className="w-5 h-5 mr-2" />
+                      Prompt Helper
                     </Button>
                   </Link>
                   <Link to="/library" onClick={handleNavClick}>
