@@ -243,7 +243,7 @@ const PromptHelperDialog = ({
                 }
               }}
               placeholder="Describe what you want to create..."
-              className="min-h-[80px] resize-none"
+              className="min-h-[80px] resize-y"
               disabled={isLoading}
             />
             <Button

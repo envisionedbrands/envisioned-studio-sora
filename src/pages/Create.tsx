@@ -229,7 +229,7 @@ const Create = () => {
                     onChange={(e) => setPrompt(e.target.value)}
                     required
                     rows={4}
-                    className="resize-none"
+                    className="resize-y min-h-[100px]"
                   />
                 </div>
 
