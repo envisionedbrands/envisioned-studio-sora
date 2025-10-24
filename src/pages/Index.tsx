@@ -106,7 +106,7 @@ const Index = () => {
               </div>
               <h3 className="font-serif text-2xl font-bold mb-3">Pro Quality</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Access premium models for editorial-grade results
+                Access premium models for editorial-grade results and watermark removal
               </p>
             </div>
           </div>
