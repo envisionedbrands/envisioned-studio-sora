@@ -23,10 +23,8 @@ import { Loader2, Sparkles } from "lucide-react";
 import { videoGenerationSchema } from "@/lib/validations";
 
 const MODELS = [
-  { value: "sora-2-text-to-video", label: "Sora 2 - Text to Video (Base)" },
-  { value: "sora-2-image-to-video", label: "Sora 2 - Image to Video (Base)" },
-  { value: "sora-2-pro-text-to-video", label: "Sora 2 Pro - Text to Video" },
-  { value: "sora-2-pro-image-to-video", label: "Sora 2 Pro - Image to Video" },
+  { value: "sora-2-text-to-video", label: "Sora 2 - Text to Video" },
+  { value: "sora-2-image-to-video", label: "Sora 2 - Image to Video" },
 ];
 
 const ASPECT_RATIOS = [

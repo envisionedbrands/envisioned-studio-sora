@@ -10,6 +10,7 @@ const Navigation = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
   const [credits, setCredits] = useState<number | null>(null);
+  const [tier, setTier] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -35,12 +36,13 @@ const Navigation = () => {
   const fetchCredits = async () => {
     const { data } = await supabase
       .from("profiles")
-      .select("credits")
+      .select("credits, tier")
       .eq("id", session?.user?.id)
       .single();
     
     if (data) {
       setCredits(data.credits);
+      setTier(data.tier);
     }
   };
 
@@ -77,6 +79,11 @@ const Navigation = () => {
               <Link to="/create">
                 <Button variant="ghost" size="sm">Create</Button>
               </Link>
+              {tier === "pro" && (
+                <Link to="/create-pro">
+                  <Button variant="ghost" size="sm">Create Pro</Button>
+                </Link>
+              )}
               <Link to="/storyboard">
                 <Button variant="ghost" size="sm" className="hidden lg:inline-flex">
                   Storyboard
@@ -125,6 +132,13 @@ const Navigation = () => {
                       Create
                     </Button>
                   </Link>
+                  {tier === "pro" && (
+                    <Link to="/create-pro" onClick={handleNavClick}>
+                      <Button variant="ghost" className="w-full justify-start">
+                        Create Pro
+                      </Button>
+                    </Link>
+                  )}
                   <Link to="/storyboard" onClick={handleNavClick}>
                     <Button variant="ghost" className="w-full justify-start">
                       Storyboard

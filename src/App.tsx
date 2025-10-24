@@ -7,6 +7,7 @@ import CookieConsent from "./components/CookieConsent";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Create from "./pages/Create";
+import CreatePro from "./pages/CreatePro";
 import Storyboard from "./pages/Storyboard";
 import Library from "./pages/Library";
 import Account from "./pages/Account";
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/create" element={<Create />} />
+          <Route path="/create-pro" element={<CreatePro />} />
           <Route path="/storyboard" element={<Storyboard />} />
           <Route path="/library" element={<Library />} />
           <Route path="/account" element={<Account />} />
