@@ -55,7 +55,7 @@ serve(async (req) => {
         console.log(`Checking status for video ${video.id}, task ${video.task_id}`);
 
         const pollResponse = await fetch(
-          `https://api.kie.ai/api/v1/jobs/queryTask?taskId=${video.task_id}`,
+          `https://api.kie.ai/api/v1/jobs/recordInfo?taskId=${video.task_id}`,
           {
             headers: {
               Authorization: `Bearer ${kieApiKey}`,
