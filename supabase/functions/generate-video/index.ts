@@ -112,94 +112,9 @@ serve(async (req) => {
       .update({ task_id: taskId, status: "processing" })
       .eq("id", videoId);
 
-    // Poll for completion (max 60 attempts = 5 minutes)
-    let attempts = 0;
-    const maxAttempts = 60;
-    let taskComplete = false;
-
-    while (attempts < maxAttempts && !taskComplete) {
-      await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds
-      attempts++;
-
-      console.log(`Polling attempt ${attempts}/${maxAttempts} for task ${taskId}`);
-
-      const pollResponse = await fetch(
-        `https://api.kie.ai/api/v1/jobs/queryTask?taskId=${taskId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${kieApiKey}`,
-          },
-        }
-      );
-
-      const pollData = await pollResponse.json();
-      console.log("Full poll response:", JSON.stringify(pollData));
-      
-      const state = pollData?.data?.state;
-      console.log("Task state:", state);
-
-      if (!pollResponse.ok) {
-        console.error("Poll response not OK:", pollResponse.status, pollData);
-      }
-
-      if (state === "success") {
-        const resultJson = pollData.data.resultJson;
-        let resultUrls = [];
-
-        try {
-          const parsed = JSON.parse(resultJson);
-          resultUrls = parsed.resultUrls || [];
-        } catch (e) {
-          console.error("Failed to parse result JSON:", e);
-        }
-
-        const resultUrl = resultUrls[0] || null;
-
-        console.log("Task completed successfully, result URL:", resultUrl);
-
-        // Update video record
-        await supabase
-          .from("videos")
-          .update({
-            status: "success",
-            result_url: resultUrl,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", videoId);
-
-        // Deduct credit
-        await supabase
-          .from("profiles")
-          .update({ credits: profile.credits - 1 })
-          .eq("id", user.id);
-
-        taskComplete = true;
-      } else if (state === "fail") {
-        console.error("Task failed");
-
-        await supabase
-          .from("videos")
-          .update({
-            status: "fail",
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", videoId);
-
-        taskComplete = true;
-      }
-    }
-
-    if (!taskComplete) {
-      console.log("Task timed out after max attempts");
-      await supabase
-        .from("videos")
-        .update({ status: "fail" })
-        .eq("id", videoId);
-    }
-
     return new Response(
       JSON.stringify({
-        message: "Task initiated",
+        message: "Task created successfully. Processing will continue in background.",
         taskId,
         videoId,
       }),

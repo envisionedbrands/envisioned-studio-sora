@@ -52,7 +52,7 @@ const Navigation = () => {
       <div className="container mx-auto px-6 py-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 transition-editorial hover:opacity-70">
           <Film className="w-6 h-6 text-accent" />
-          <span className="font-serif text-xl font-bold">Sora Studio</span>
+          <span className="font-serif text-xl font-bold">Envisioned Studio</span>
         </Link>
 
         <div className="flex items-center gap-6">

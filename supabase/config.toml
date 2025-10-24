@@ -1,1 +1,7 @@
 project_id = "kpulfxvaugjerklhqxpd"
+
+[functions.generate-video]
+verify_jwt = true
+
+[functions.poll-video-status]
+verify_jwt = false

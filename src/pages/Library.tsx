@@ -60,6 +60,28 @@ const Library = () => {
   useEffect(() => {
     if (session?.user?.id) {
       fetchVideos();
+      
+      // Set up realtime subscription for video updates
+      const channel = supabase
+        .channel('video-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'videos',
+            filter: `user_id=eq.${session.user.id}`
+          },
+          (payload) => {
+            console.log('Video update received:', payload);
+            fetchVideos();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
     }
   }, [session]);
 

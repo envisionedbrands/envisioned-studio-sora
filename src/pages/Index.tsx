@@ -40,13 +40,13 @@ const Index = () => {
       <section className="pt-32 pb-20 px-6">
         <div className="container mx-auto max-w-5xl text-center">
           <div className="inline-block mb-6 px-4 py-2 bg-accent/10 rounded-full text-sm font-medium text-accent">
-            Powered by Sora 2
+            Powered by Sora 2 via Kie.ai
           </div>
           
           <h1 className="font-serif text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight">
-            Create Cinematic
+            Envisioned Studio
             <br />
-            <span className="text-gradient">AI Videos</span>
+            <span className="text-gradient">AI Video Creation</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
