@@ -67,7 +67,7 @@ const Navigation = () => {
                 <Button variant="ghost">Create</Button>
               </Link>
               <Link to="/storyboard">
-                <Button variant="ghost">Storyboard</Button>
+                <Button variant="ghost">Storyboard (Coming Soon)</Button>
               </Link>
               <Link to="/library">
                 <Button variant="ghost">Library</Button>
