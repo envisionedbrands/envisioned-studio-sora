@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
 import { Card, CardContent } from "@/components/ui/card";
@@ -260,6 +261,8 @@ const Library = () => {
           )}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };

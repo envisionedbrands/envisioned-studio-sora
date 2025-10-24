@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 import { Session } from "@supabase/supabase-js";
 import { signUpSchema, signInSchema } from "@/lib/validations";
 
@@ -236,6 +237,8 @@ const Auth = () => {
           </Tabs>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };
