@@ -100,6 +100,7 @@ serve(async (req) => {
     }
 
     console.log("Creating Kie.ai task for video:", videoId);
+    console.log("Model:", video.model);
 
     // Create task with Kie.ai
     const kiePayload: any = {
@@ -154,6 +155,8 @@ serve(async (req) => {
         kiePayload.input.image_urls = [video.image_url];
       }
     }
+
+    console.log("Payload being sent:", JSON.stringify(kiePayload, null, 2));
 
     const createResponse = await fetch("https://api.kie.ai/api/v1/jobs/createTask", {
       method: "POST",
