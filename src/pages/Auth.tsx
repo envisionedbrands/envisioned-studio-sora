@@ -22,6 +22,7 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [inviteCode, setInviteCode] = useState("");
+  const [googleInviteCode, setGoogleInviteCode] = useState("");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -122,15 +123,37 @@ const Auth = () => {
   };
 
   const handleGoogleSignIn = async () => {
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/create`,
-      },
-    });
+    try {
+      // Validate invite code
+      const validation = signUpSchema.shape.inviteCode.safeParse(googleInviteCode);
+      if (!validation.success) {
+        toast.error(validation.error.errors[0].message);
+        return;
+      }
 
-    if (error) {
+      // Check if invite code is valid
+      const { data: isValid, error: codeError } = await supabase.rpc('use_invite_code', {
+        code_text: googleInviteCode.toUpperCase()
+      });
+
+      if (codeError || !isValid) {
+        toast.error("Invalid or expired invite code");
+        return;
+      }
+
+      setLoading(true);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/create`,
+        },
+      });
+
+      if (error) {
+        toast.error(error.message);
+        setLoading(false);
+      }
+    } catch (error: any) {
       toast.error(error.message);
       setLoading(false);
     }
@@ -160,12 +183,21 @@ const Auth = () => {
                   <CardDescription>Sign in to continue creating</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="google-invite">Invite Code</Label>
+                    <Input
+                      id="google-invite"
+                      placeholder="Enter your invite code"
+                      value={googleInviteCode}
+                      onChange={(e) => setGoogleInviteCode(e.target.value.toUpperCase())}
+                    />
+                  </div>
                   <Button
                     type="button"
                     variant="outline"
                     className="w-full"
                     onClick={handleGoogleSignIn}
-                    disabled={loading}
+                    disabled={loading || !googleInviteCode}
                   >
                     <Chrome className="w-4 h-4 mr-2" />
                     Continue with Google
@@ -220,12 +252,21 @@ const Auth = () => {
                   <CardDescription>Start with 5 free credits</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="google-invite-signup">Invite Code</Label>
+                    <Input
+                      id="google-invite-signup"
+                      placeholder="Enter your invite code"
+                      value={googleInviteCode}
+                      onChange={(e) => setGoogleInviteCode(e.target.value.toUpperCase())}
+                    />
+                  </div>
                   <Button
                     type="button"
                     variant="outline"
                     className="w-full"
                     onClick={handleGoogleSignIn}
-                    disabled={loading}
+                    disabled={loading || !googleInviteCode}
                   >
                     <Chrome className="w-4 h-4 mr-2" />
                     Continue with Google
