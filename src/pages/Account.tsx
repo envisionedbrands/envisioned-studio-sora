@@ -126,7 +126,13 @@ const Account = () => {
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-muted-foreground mb-1">Available Credits</p>
-                    <p className="text-3xl font-bold font-serif">{profile?.credits || 0}</p>
+                    <p className={`text-3xl font-bold font-serif ${
+                      (profile?.credits || 0) >= 5 ? "text-emerald-400" :
+                      (profile?.credits || 0) >= 3 ? "text-yellow-400" :
+                      "text-red-400"
+                    }`}>
+                      {profile?.credits || 0}
+                    </p>
                   </div>
                 </div>
 

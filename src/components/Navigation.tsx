@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Film, User, Menu, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,10 +8,19 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const Navigation = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [session, setSession] = useState<Session | null>(null);
   const [credits, setCredits] = useState<number | null>(null);
   const [tier, setTier] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const getCreditColorClass = (credits: number) => {
+    if (credits >= 5) return "bg-emerald-500/20 text-emerald-400 border border-emerald-400/30";
+    if (credits >= 3) return "bg-yellow-500/20 text-yellow-400 border border-yellow-400/30";
+    return "bg-red-500/20 text-red-400 border border-red-400/30";
+  };
+
+  const isActivePath = (path: string) => location.pathname === path;
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -72,26 +81,54 @@ const Navigation = () => {
           {session ? (
             <>
               {credits !== null && (
-                <div className="text-sm font-medium bg-accent/10 px-3 lg:px-4 py-2 rounded-full">
+                <div className={`text-sm font-medium px-3 lg:px-4 py-2 rounded-full ${getCreditColorClass(credits)}`}>
                   {credits} Credits
                 </div>
               )}
               <Link to="/create">
-                <Button variant="ghost" size="sm">Create</Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className={isActivePath("/create") ? "bg-accent text-accent-foreground" : ""}
+                >
+                  Create
+                </Button>
               </Link>
               <Link to="/create-pro">
-                <Button variant="ghost" size="sm">Create Pro</Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className={isActivePath("/create-pro") ? "bg-accent text-accent-foreground" : ""}
+                >
+                  Create Pro
+                </Button>
               </Link>
               <Link to="/storyboard">
-                <Button variant="ghost" size="sm" className="hidden lg:inline-flex">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className={`hidden lg:inline-flex ${isActivePath("/storyboard") ? "bg-accent text-accent-foreground" : ""}`}
+                >
                   Storyboard
                 </Button>
               </Link>
               <Link to="/library">
-                <Button variant="ghost" size="sm">Library</Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className={isActivePath("/library") ? "bg-accent text-accent-foreground" : ""}
+                >
+                  Library
+                </Button>
               </Link>
               <Link to="/failed-videos">
-                <Button variant="ghost" size="sm">Help</Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className={isActivePath("/failed-videos") ? "bg-accent text-accent-foreground" : ""}
+                >
+                  Help
+                </Button>
               </Link>
               <Link to="/account">
                 <Button variant="ghost" size="icon">
@@ -121,32 +158,47 @@ const Navigation = () => {
               {session ? (
                 <>
                   {credits !== null && (
-                    <div className="text-sm font-medium bg-accent/10 px-4 py-2 rounded-full text-center">
+                    <div className={`text-sm font-medium px-4 py-2 rounded-full text-center ${getCreditColorClass(credits)}`}>
                       {credits} Credits
                     </div>
                   )}
                   <Link to="/create" onClick={handleNavClick}>
-                    <Button variant="ghost" className="w-full justify-start">
+                    <Button 
+                      variant="ghost" 
+                      className={`w-full justify-start ${isActivePath("/create") ? "bg-accent text-accent-foreground" : ""}`}
+                    >
                       Create
                     </Button>
                   </Link>
                   <Link to="/create-pro" onClick={handleNavClick}>
-                    <Button variant="ghost" className="w-full justify-start">
+                    <Button 
+                      variant="ghost" 
+                      className={`w-full justify-start ${isActivePath("/create-pro") ? "bg-accent text-accent-foreground" : ""}`}
+                    >
                       Create Pro
                     </Button>
                   </Link>
                   <Link to="/storyboard" onClick={handleNavClick}>
-                    <Button variant="ghost" className="w-full justify-start">
+                    <Button 
+                      variant="ghost" 
+                      className={`w-full justify-start ${isActivePath("/storyboard") ? "bg-accent text-accent-foreground" : ""}`}
+                    >
                       Storyboard
                     </Button>
                   </Link>
                   <Link to="/library" onClick={handleNavClick}>
-                    <Button variant="ghost" className="w-full justify-start">
+                    <Button 
+                      variant="ghost" 
+                      className={`w-full justify-start ${isActivePath("/library") ? "bg-accent text-accent-foreground" : ""}`}
+                    >
                       Library
                     </Button>
                   </Link>
                   <Link to="/failed-videos" onClick={handleNavClick}>
-                    <Button variant="ghost" className="w-full justify-start">
+                    <Button 
+                      variant="ghost" 
+                      className={`w-full justify-start ${isActivePath("/failed-videos") ? "bg-accent text-accent-foreground" : ""}`}
+                    >
                       Help
                     </Button>
                   </Link>
