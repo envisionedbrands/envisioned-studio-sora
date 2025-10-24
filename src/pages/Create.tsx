@@ -215,7 +215,7 @@ const Create = () => {
                       onClick={() => setPromptHelperOpen(true)}
                     >
                       <Sparkles className="w-4 h-4 mr-2" />
-                      AI Helper
+                      Studio's Creative Director
                     </Button>
                   </div>
                   <Textarea

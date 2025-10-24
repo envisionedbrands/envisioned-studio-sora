@@ -238,7 +238,7 @@ const CreatePro = () => {
                     className="text-accent hover:text-accent/80"
                   >
                     <Sparkles className="w-4 h-4 mr-1" />
-                    AI Helper
+                    Studio's Creative Director
                   </Button>
                 </div>
                 <Textarea

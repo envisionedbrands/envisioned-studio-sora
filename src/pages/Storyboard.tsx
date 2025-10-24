@@ -311,7 +311,7 @@ const Storyboard = () => {
                         onClick={() => setPromptHelperOpen(true)}
                       >
                         <Sparkles className="w-4 h-4 mr-2" />
-                        AI Scene Helper
+                        Studio's Creative Director
                       </Button>
                       <span className={`text-sm font-medium ${getRemainingDuration() === 0 ? 'text-green-600' : 'text-orange-600'}`}>
                         Remaining: {getRemainingDuration().toFixed(1)}s

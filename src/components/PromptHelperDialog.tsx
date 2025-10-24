@@ -249,7 +249,7 @@ const PromptHelperDialog = ({
           <DialogTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-primary" />
-              AI Prompt Helper
+              Studio's Creative Director
             </div>
             {messages.length > 0 && (
               <Button
