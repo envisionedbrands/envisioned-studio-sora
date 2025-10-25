@@ -43,16 +43,18 @@ const Index = () => {
       <section className="pt-32 pb-20 px-6">
         <div className="container mx-auto max-w-5xl text-center">
           <div className="inline-block mb-6 px-4 py-2 bg-accent/10 rounded-full text-sm font-medium text-accent">
-            {t('home.poweredBy')}
+            {t('home.poweredBy')} {t('home.studioName')}
           </div>
           
-          <h1 className="font-serif text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight">
-            {t('home.title')}
-            <br />
-            <span className="text-gradient">{t('home.subtitle')}</span>
+          <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight">
+            <span className="text-gradient">{t('home.title')}</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-2xl md:text-3xl font-light text-muted-foreground mb-4 max-w-3xl mx-auto leading-relaxed">
+            {t('home.subtitle')}
+          </p>
+
+          <p className="text-lg md:text-xl text-muted-foreground/80 mb-12 max-w-2xl mx-auto leading-relaxed italic">
             {t('home.description')}
           </p>
 
@@ -77,8 +79,20 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Director Section */}
+      <section className="py-16 px-6 bg-gradient-to-b from-background to-accent/5">
+        <div className="container mx-auto max-w-4xl text-center">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6">
+            {t('home.sectionTitle')}
+          </h2>
+          <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed whitespace-pre-line">
+            {t('home.sectionSubtitle')}
+          </p>
+        </div>
+      </section>
+
       {/* Features Section */}
-      <section className="py-20 px-6 bg-gradient-to-b from-background to-secondary/20">
+      <section className="py-20 px-6">
         <div className="container mx-auto max-w-6xl">
           <div className="grid md:grid-cols-3 gap-12">
             <div className="text-center">
@@ -86,7 +100,7 @@ const Index = () => {
                 <Video className="w-8 h-8 text-accent" />
               </div>
               <h3 className="font-serif text-2xl font-bold mb-3">{t('home.textToVideo')}</h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed italic">
                 {t('home.textToVideoDesc')}
               </p>
             </div>
@@ -96,7 +110,7 @@ const Index = () => {
                 <Sparkles className="w-8 h-8 text-accent" />
               </div>
               <h3 className="font-serif text-2xl font-bold mb-3">{t('home.imageToVideo')}</h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed italic">
                 {t('home.imageToVideoDesc')}
               </p>
             </div>
@@ -106,11 +120,29 @@ const Index = () => {
                 <Zap className="w-8 h-8 text-accent" />
               </div>
               <h3 className="font-serif text-2xl font-bold mb-3">{t('home.proQuality')}</h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed italic">
                 {t('home.proQualityDesc')}
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Visionaries Section */}
+      <section className="py-20 px-6 bg-gradient-to-b from-accent/5 to-background">
+        <div className="container mx-auto max-w-4xl text-center">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-8">
+            {t('home.visionariesTitle')}
+          </h2>
+          <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
+            {t('home.visionariesDesc')}
+          </p>
+          <p className="text-lg text-muted-foreground/80 mb-6 leading-relaxed">
+            {t('home.visionariesSubDesc')}
+          </p>
+          <p className="text-xl font-medium text-foreground italic">
+            {t('home.visionariesTagline')}
+          </p>
         </div>
       </section>
 
@@ -120,11 +152,12 @@ const Index = () => {
           <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6">
             {t('home.readyTitle')}
           </h2>
-          <p className="text-xl text-muted-foreground mb-8">
+          <p className="text-xl text-muted-foreground mb-8 whitespace-pre-line leading-relaxed">
             {t('home.readyDesc')}
           </p>
-          <Button size="lg" onClick={handleGetStarted} className="text-lg px-8 py-6">
+          <Button size="lg" onClick={handleGetStarted} className="text-lg px-8 py-6 group">
             {t('home.getStartedFree')}
+            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>
       </section>
