@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import { Session } from "@supabase/supabase-js";
 import { Loader2, Sparkles } from "lucide-react";
 import { videoGenerationSchema } from "@/lib/validations";
+import { useTranslation } from "react-i18next";
 
 const MODELS = [
   { value: "sora-2-text-to-video", label: "Sora 2 - Text to Video" },
@@ -41,6 +42,7 @@ const DURATIONS = [
 const Create = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(false);
   const [prompt, setPrompt] = useState("");
@@ -83,7 +85,7 @@ const Create = () => {
     e.preventDefault();
     
     if (!session?.user?.id) {
-      toast.error("Please sign in to create videos");
+      toast.error(t('common.errors.signInRequired'));
       return;
     }
 
@@ -111,7 +113,7 @@ const Create = () => {
         .single();
 
       if (!profile || profile.credits <= 0) {
-        toast.error("Insufficient credits");
+        toast.error(t('common.errors.insufficientCredits'));
         setLoading(false);
         return;
       }
@@ -163,16 +165,16 @@ const Create = () => {
 
       if (functionError) {
         console.error("Function error:", functionError);
-        toast.error("Failed to start generation");
+        toast.error(t('common.errors.generationFailed'));
         setLoading(false);
         return;
       }
 
-      toast.success("Video generation started! Videos take a few minutes to generate — it will appear in your library when ready.");
+      toast.success(t('common.success.generationStarted'));
       navigate("/library");
     } catch (error: any) {
       console.error("Error:", error);
-      toast.error(error.message || "Failed to start generation");
+      toast.error(error.message || t('common.errors.generationFailed'));
     } finally {
       setLoading(false);
     }
@@ -189,25 +191,25 @@ const Create = () => {
       <div className="pt-32 pb-20 px-6">
         <div className="container mx-auto max-w-4xl">
           <div className="mb-12 text-center">
-            <h1 className="font-serif text-5xl font-bold mb-4">Create Video</h1>
+            <h1 className="font-serif text-5xl font-bold mb-4">{t('create.title')}</h1>
             <p className="text-xl text-muted-foreground">
-              Transform your ideas into cinematic reality
+              {t('create.subtitle')}
             </p>
           </div>
 
           <Card>
             <CardHeader>
-              <CardTitle className="font-serif text-2xl">Generation Settings</CardTitle>
-              <CardDescription className="mb-6">Configure your video parameters</CardDescription>
+              <CardTitle className="font-serif text-2xl">{t('create.settingsTitle')}</CardTitle>
+              <CardDescription className="mb-6">{t('create.settingsDesc')}</CardDescription>
               <p className="mt-16 text-sm font-bold font-mono text-muted-foreground mb-8">
-                ⚠️ Occasionally, a video may fail due to Sora's internal moderation policies — this isn't an app error, it's a platform restriction. Read more info in the Help section.
+                {t('create.warning')}
               </p>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="prompt">Prompt *</Label>
+                    <Label htmlFor="prompt">{t('create.prompt')} *</Label>
                     <Button
                       type="button"
                       variant="outline"
@@ -215,12 +217,12 @@ const Create = () => {
                       onClick={() => setPromptHelperOpen(true)}
                     >
                       <Sparkles className="w-4 h-4 mr-2" />
-                      Studio's Creative Director
+                      {t('create.creativeDirector')}
                     </Button>
                   </div>
                   <Textarea
                     id="prompt"
-                    placeholder="Describe your video in detail..."
+                    placeholder={t('create.promptPlaceholder')}
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     required
@@ -231,7 +233,7 @@ const Create = () => {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="model">Model</Label>
+                    <Label htmlFor="model">{t('create.model')}</Label>
                     <Select value={model} onValueChange={setModel}>
                       <SelectTrigger id="model">
                         <SelectValue />
@@ -247,7 +249,7 @@ const Create = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="aspect-ratio">Aspect Ratio</Label>
+                    <Label htmlFor="aspect-ratio">{t('create.aspectRatio')}</Label>
                     <Select value={aspectRatio} onValueChange={setAspectRatio}>
                       <SelectTrigger id="aspect-ratio">
                         <SelectValue />
@@ -263,7 +265,7 @@ const Create = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="duration">Duration</Label>
+                    <Label htmlFor="duration">{t('create.duration')}</Label>
                     <Select value={duration} onValueChange={setDuration}>
                       <SelectTrigger id="duration">
                         <SelectValue />
@@ -280,7 +282,7 @@ const Create = () => {
 
                   {model.includes("image-to-video") && (
                     <div className="space-y-2">
-                      <Label htmlFor="image">Input Image</Label>
+                      <Label htmlFor="image">{t('create.inputImage')}</Label>
                       <Input
                         id="image"
                         type="file"
@@ -295,10 +297,10 @@ const Create = () => {
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 w-5 h-5 animate-spin" />
-                      Generating...
+                      {t('create.generating')}
                     </>
                   ) : (
-                    "Generate Video"
+                    t('create.generateVideo')
                   )}
                 </Button>
               </form>

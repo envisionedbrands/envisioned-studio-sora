@@ -13,9 +13,11 @@ import { Session } from "@supabase/supabase-js";
 import { signUpSchema, signInSchema } from "@/lib/validations";
 import { Separator } from "@/components/ui/separator";
 import { Chrome } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -92,7 +94,7 @@ const Auth = () => {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Account created! Redirecting...");
+      toast.success(t('common.success.accountCreated'));
     }
   };
 
@@ -118,7 +120,7 @@ const Auth = () => {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Welcome back!");
+      toast.success(t('common.success.welcomeBack'));
     }
   };
 
@@ -173,15 +175,15 @@ const Auth = () => {
         <div className="container mx-auto max-w-md">
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsTrigger value="signin">{t('auth.signIn')}</TabsTrigger>
+              <TabsTrigger value="signup">{t('auth.signUp')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="signin">
               <Card>
                 <CardHeader>
-                  <CardTitle className="font-serif text-2xl">Welcome Back</CardTitle>
-                  <CardDescription>Sign in to continue creating</CardDescription>
+                  <CardTitle className="font-serif text-2xl">{t('auth.welcomeBack')}</CardTitle>
+                  <CardDescription>{t('auth.signInDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <Button
@@ -192,7 +194,7 @@ const Auth = () => {
                     disabled={loading}
                   >
                     <Chrome className="w-4 h-4 mr-2" />
-                    Continue with Google
+                    {t('auth.continueGoogle')}
                   </Button>
 
                   <div className="relative">
@@ -201,25 +203,25 @@ const Auth = () => {
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
                       <span className="bg-background px-2 text-muted-foreground">
-                        Or continue with email
+                        {t('auth.orContinueEmail')}
                       </span>
                     </div>
                   </div>
 
                   <form onSubmit={handleSignIn} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email">{t('auth.email')}</Label>
                       <Input
                         id="email"
                         type="email"
-                        placeholder="you@example.com"
+                        placeholder={t('auth.emailPlaceholder')}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password">Password</Label>
+                      <Label htmlFor="password">{t('auth.password')}</Label>
                       <Input
                         id="password"
                         type="password"
@@ -229,7 +231,7 @@ const Auth = () => {
                       />
                     </div>
                     <Button type="submit" className="w-full" disabled={loading}>
-                      {loading ? "Signing in..." : "Sign In"}
+                      {loading ? t('auth.signingIn') : t('auth.signIn')}
                     </Button>
                   </form>
 
@@ -240,15 +242,15 @@ const Auth = () => {
             <TabsContent value="signup">
               <Card>
                 <CardHeader>
-                  <CardTitle className="font-serif text-2xl">Create Account</CardTitle>
-                  <CardDescription>Start with 5 free credits</CardDescription>
+                  <CardTitle className="font-serif text-2xl">{t('auth.createAccount')}</CardTitle>
+                  <CardDescription>{t('auth.signUpDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="google-invite-signup">Invite Code</Label>
+                    <Label htmlFor="google-invite-signup">{t('auth.inviteCode')}</Label>
                     <Input
                       id="google-invite-signup"
-                      placeholder="Enter your invite code"
+                      placeholder={t('auth.inviteCodePlaceholder')}
                       value={googleInviteCode}
                       onChange={(e) => setGoogleInviteCode(e.target.value.toUpperCase())}
                     />
@@ -261,7 +263,7 @@ const Auth = () => {
                     disabled={loading || !googleInviteCode}
                   >
                     <Chrome className="w-4 h-4 mr-2" />
-                    Continue with Google
+                    {t('auth.continueGoogle')}
                   </Button>
 
                   <div className="relative">
@@ -270,36 +272,36 @@ const Auth = () => {
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
                       <span className="bg-background px-2 text-muted-foreground">
-                        Or continue with email
+                        {t('auth.orContinueEmail')}
                       </span>
                     </div>
                   </div>
 
                   <form onSubmit={handleSignUp} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Name</Label>
+                      <Label htmlFor="name">{t('auth.name')}</Label>
                       <Input
                         id="name"
                         type="text"
-                        placeholder="Your name"
+                        placeholder={t('auth.namePlaceholder')}
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signup-email">Email</Label>
+                      <Label htmlFor="signup-email">{t('auth.email')}</Label>
                       <Input
                         id="signup-email"
                         type="email"
-                        placeholder="you@example.com"
+                        placeholder={t('auth.emailPlaceholder')}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signup-password">Password</Label>
+                      <Label htmlFor="signup-password">{t('auth.password')}</Label>
                       <Input
                         id="signup-password"
                         type="password"
@@ -310,18 +312,18 @@ const Auth = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="invite-code">Invite Code</Label>
+                      <Label htmlFor="invite-code">{t('auth.inviteCode')}</Label>
                       <Input
                         id="invite-code"
                         type="text"
-                        placeholder="Enter your invite code"
+                        placeholder={t('auth.inviteCodePlaceholder')}
                         value={inviteCode}
                         onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
                         required
                       />
                     </div>
                     <Button type="submit" className="w-full" disabled={loading}>
-                      {loading ? "Creating account..." : "Create Account"}
+                      {loading ? t('auth.creatingAccount') : t('auth.createAccount')}
                     </Button>
                   </form>
 

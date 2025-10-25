@@ -163,6 +163,30 @@
       "processing": "PROCESSING",
       "success": "SUCCESS",
       "fail": "FAIL"
+    },
+    "errors": {
+      "signInRequired": "Please sign in to create videos",
+      "insufficientCredits": "Insufficient credits",
+      "failed": "Failed",
+      "uploadFailed": "Failed to upload image",
+      "createFailed": "Failed to create video record",
+      "generationFailed": "Failed to start video generation",
+      "error": "An error occurred"
+    },
+    "success": {
+      "generationStarted": "Video generation started! Videos take a few minutes to generate — it will appear in your library when ready.",
+      "proGenerationStarted": "Video generation started! Check your library.",
+      "storyboardStarted": "Storyboard generation started! Storyboards take a few minutes to generate — they will appear in your library when ready.",
+      "welcomeBack": "Welcome back!",
+      "accountCreated": "Account created! Redirecting..."
     }
+  },
+  "failedVideos": {
+    "title": "Videos Failing? Read",
+    "contentPolicy": "Content-Related Policy Violations",
+    "promptFormatting": "Prompt Formatting and Input Errors",
+    "technicalLimitations": "Technical Limitations of the Model",
+    "platformRestrictions": "Platform & Usage Restrictions",
+    "apiErrors": "API Errors and System Issues"
   }
 }
