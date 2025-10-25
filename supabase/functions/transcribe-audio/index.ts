@@ -60,7 +60,7 @@ serve(async (req) => {
     const blob = new Blob([binaryAudio], { type: 'audio/webm' });
     formData.append('file', blob, 'audio.webm');
     formData.append('model', 'whisper-1');
-    formData.append('language', 'en');
+    // Language auto-detection enabled - supports 50+ languages
 
     // Send to OpenAI via Lovable AI Gateway
     const response = await fetch('https://ai.gateway.lovable.dev/v1/audio/transcriptions', {
