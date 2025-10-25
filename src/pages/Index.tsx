@@ -94,7 +94,7 @@ const Index = () => {
       {/* Director Section */}
       <section className="py-16 px-6 bg-gradient-to-b from-background to-accent/5">
         <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 whitespace-pre-line">
             {t('home.sectionTitle')}
           </h2>
           <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed whitespace-pre-line">
