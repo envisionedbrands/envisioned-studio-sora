@@ -1,19 +1,21 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { useTranslation } from "react-i18next";
 
 const FailedVideos = () => {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="container mx-auto px-4 md:px-6 pt-24 pb-16">
         <article className="max-w-4xl mx-auto prose prose-invert">
           <h1 className="text-4xl md:text-5xl font-serif font-bold mb-8 text-foreground">
-            Videos Failing? Read
+            {t('failedVideos.title')}
           </h1>
 
           <section className="mb-12">
             <h2 className="text-2xl md:text-3xl font-serif font-bold mb-6 text-foreground">
-              Content-Related Policy Violations
+              {t('failedVideos.contentPolicy')}
             </h2>
 
             <div className="space-y-6">
