@@ -5,10 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useTranslation } from "react-i18next";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 const Navigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
   const [session, setSession] = useState<Session | null>(null);
   const [credits, setCredits] = useState<number | null>(null);
   const [tier, setTier] = useState<string | null>(null);
@@ -82,16 +85,17 @@ const Navigation = () => {
             <>
               {credits !== null && (
                 <div className={`text-sm font-medium px-3 lg:px-4 py-2 rounded-full ${getCreditColorClass(credits)}`}>
-                  {credits} Credits
+                  {credits} {t('nav.credits')}
                 </div>
               )}
+              <LanguageSelector />
               <Link to="/create">
                 <Button 
                   variant="ghost" 
                   size="sm"
                   className={isActivePath("/create") ? "bg-accent text-accent-foreground" : ""}
                 >
-                  Create
+                  {t('nav.create')}
                 </Button>
               </Link>
               <Link to="/create-pro">
@@ -100,7 +104,7 @@ const Navigation = () => {
                   size="sm"
                   className={isActivePath("/create-pro") ? "bg-accent text-accent-foreground" : ""}
                 >
-                  Create Pro
+                  {t('nav.createPro')}
                 </Button>
               </Link>
               <Link to="/storyboard">
@@ -109,7 +113,7 @@ const Navigation = () => {
                   size="sm" 
                   className={`hidden lg:inline-flex ${isActivePath("/storyboard") ? "bg-accent text-accent-foreground" : ""}`}
                 >
-                  Storyboard
+                  {t('nav.storyboard')}
                 </Button>
               </Link>
               <Link to="/library">
@@ -118,7 +122,7 @@ const Navigation = () => {
                   size="sm"
                   className={isActivePath("/library") ? "bg-accent text-accent-foreground" : ""}
                 >
-                  Library
+                  {t('nav.library')}
                 </Button>
               </Link>
               <Link to="/failed-videos">
@@ -127,7 +131,7 @@ const Navigation = () => {
                   size="sm"
                   className={isActivePath("/failed-videos") ? "bg-accent text-accent-foreground" : ""}
                 >
-                  Help
+                  {t('nav.help')}
                 </Button>
               </Link>
               <Link to="/account">
@@ -136,12 +140,12 @@ const Navigation = () => {
                 </Button>
               </Link>
               <Button variant="outline" size="sm" onClick={handleLogout}>
-                Logout
+                {t('nav.logout')}
               </Button>
             </>
           ) : (
             <Link to="/auth">
-              <Button variant="default" size="sm">Sign In</Button>
+              <Button variant="default" size="sm">{t('nav.signIn')}</Button>
             </Link>
           )}
         </div>
@@ -157,9 +161,10 @@ const Navigation = () => {
             <div className="flex flex-col gap-6 mt-8">
               {session ? (
                 <>
+                  <LanguageSelector />
                   {credits !== null && (
                     <div className={`text-sm font-medium px-4 py-2 rounded-full text-center ${getCreditColorClass(credits)}`}>
-                      {credits} Credits
+                      {credits} {t('nav.credits')}
                     </div>
                   )}
                   <Link to="/create" onClick={handleNavClick}>
@@ -167,7 +172,7 @@ const Navigation = () => {
                       variant="ghost" 
                       className={`w-full justify-start ${isActivePath("/create") ? "bg-accent text-accent-foreground" : ""}`}
                     >
-                      Create
+                      {t('nav.create')}
                     </Button>
                   </Link>
                   <Link to="/create-pro" onClick={handleNavClick}>
@@ -175,7 +180,7 @@ const Navigation = () => {
                       variant="ghost" 
                       className={`w-full justify-start ${isActivePath("/create-pro") ? "bg-accent text-accent-foreground" : ""}`}
                     >
-                      Create Pro
+                      {t('nav.createPro')}
                     </Button>
                   </Link>
                   <Link to="/storyboard" onClick={handleNavClick}>
@@ -183,7 +188,7 @@ const Navigation = () => {
                       variant="ghost" 
                       className={`w-full justify-start ${isActivePath("/storyboard") ? "bg-accent text-accent-foreground" : ""}`}
                     >
-                      Storyboard
+                      {t('nav.storyboard')}
                     </Button>
                   </Link>
                   <Link to="/library" onClick={handleNavClick}>
@@ -191,7 +196,7 @@ const Navigation = () => {
                       variant="ghost" 
                       className={`w-full justify-start ${isActivePath("/library") ? "bg-accent text-accent-foreground" : ""}`}
                     >
-                      Library
+                      {t('nav.library')}
                     </Button>
                   </Link>
                   <Link to="/failed-videos" onClick={handleNavClick}>
@@ -199,22 +204,22 @@ const Navigation = () => {
                       variant="ghost" 
                       className={`w-full justify-start ${isActivePath("/failed-videos") ? "bg-accent text-accent-foreground" : ""}`}
                     >
-                      Help
+                      {t('nav.help')}
                     </Button>
                   </Link>
                   <Link to="/account" onClick={handleNavClick}>
                     <Button variant="ghost" className="w-full justify-start">
                       <User className="w-5 h-5 mr-2" />
-                      Account
+                      {t('nav.account')}
                     </Button>
                   </Link>
                   <Button variant="outline" onClick={handleLogout} className="w-full">
-                    Logout
+                    {t('nav.logout')}
                   </Button>
                 </>
               ) : (
                 <Link to="/auth" onClick={handleNavClick}>
-                  <Button variant="default" className="w-full">Sign In</Button>
+                  <Button variant="default" className="w-full">{t('nav.signIn')}</Button>
                 </Link>
               )}
             </div>
