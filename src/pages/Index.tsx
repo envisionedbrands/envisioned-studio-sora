@@ -143,7 +143,7 @@ const Index = () => {
       {/* Visionaries Section */}
       <section className="py-20 px-6 bg-gradient-to-b from-accent/5 to-background">
         <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-8">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-8 whitespace-pre-line">
             {t('home.visionariesTitle')}
           </h2>
           <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
@@ -161,7 +161,7 @@ const Index = () => {
       {/* CTA Section */}
       <section className="py-20 px-6">
         <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 whitespace-pre-line">
             {t('home.readyTitle')}
           </h2>
           <p className="text-xl text-muted-foreground mb-8 whitespace-pre-line leading-relaxed">
