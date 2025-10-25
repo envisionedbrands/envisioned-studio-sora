@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Session } from "@supabase/supabase-js";
 import { Loader2, Plus, Trash2, Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface Scene {
   id: string;
@@ -39,6 +40,7 @@ const DURATIONS = [
 
 const Storyboard = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(false);
   const [scenes, setScenes] = useState<Scene[]>([
@@ -242,7 +244,10 @@ const Storyboard = () => {
               <CardTitle className="font-serif text-2xl">Storyboard Settings</CardTitle>
               <CardDescription className="mb-6">Configure your storyboard parameters</CardDescription>
               <p className="mt-16 text-sm font-bold font-mono text-muted-foreground mb-8">
-                ⚠️ Occasionally, a storyboard may fail due to Sora's internal moderation policies — this isn't an app error, it's a platform restriction.
+                {t('create.warning')}{' '}
+                <Link to="/failed-videos" className="text-accent hover:underline">
+                  {t('create.warningLink')}
+                </Link>.
               </p>
             </CardHeader>
             <CardContent>

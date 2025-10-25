@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -202,7 +202,10 @@ const Create = () => {
               <CardTitle className="font-serif text-2xl">{t('create.settingsTitle')}</CardTitle>
               <CardDescription className="mb-6">{t('create.settingsDesc')}</CardDescription>
               <p className="mt-16 text-sm font-bold font-mono text-muted-foreground mb-8">
-                {t('create.warning')}
+                {t('create.warning')}{' '}
+                <Link to="/failed-videos" className="text-accent hover:underline">
+                  {t('create.warningLink')}
+                </Link>.
               </p>
             </CardHeader>
             <CardContent>

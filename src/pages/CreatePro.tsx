@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { Session } from "@supabase/supabase-js";
 import { Loader2, Sparkles, Crown } from "lucide-react";
 import { videoGenerationSchema } from "@/lib/validations";
+import { useTranslation } from "react-i18next";
 
 const PRO_MODELS = [
   { value: "sora-2-pro-text-to-video", label: "Sora 2 Pro - Text to Video" },
@@ -40,6 +41,7 @@ const DURATIONS = [
 const CreatePro = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(false);
   const [checkingTier, setCheckingTier] = useState(true);
@@ -223,6 +225,12 @@ const CreatePro = () => {
             <CardDescription>
               Generate professional videos with Sora 2 Pro models - no watermarks
             </CardDescription>
+            <p className="mt-4 text-sm font-bold font-mono text-muted-foreground">
+              {t('create.warning')}{' '}
+              <Link to="/failed-videos" className="text-accent hover:underline">
+                {t('create.warningLink')}
+              </Link>.
+            </p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
