@@ -8,15 +8,26 @@ const corsHeaders = {
 // Prompt injection detection patterns
 const injectionPatterns = [
   /ignore\s+(previous|all|above|prior)\s+(instructions?|prompts?|commands?)/i,
-  /show|reveal|display|print|output|repeat|tell\s+me\s+(your|the|my)?\s*(system|instructions?|prompts?|configuration|initialization|setup|rules)/i,
+  /(?:show|reveal|display|print|output|repeat)\s+(?:me\s+)?(?:your|the)\s+(?:system\s+)?(?:prompt|instruction|configuration|setup|initialization)/i,
   /what\s+(are|were)\s+you\s+(instructed|told|programmed|trained|configured)/i,
   /repeat\s+(the\s+)?(above|previous|prior|original)\s*(text|instructions?|prompt)/i,
   /act\s+(as|like)\s+(admin|administrator|developer|engineer|system|root)/i,
   /bypass|override|disable\s+(security|protection|safety|rules)/i,
-  /(for|just)\s+(research|testing|debugging|educational)\s+purposes?/i,
   /you\s+(are|were)\s+(now|currently)\s+(in|under)\s+(debug|dev|development)\s+mode/i,
   /pretend\s+(you|you're|to\s+be)\s+(in|under|a)\s+(debug|dev|admin)/i,
 ];
+
+// Whitelist check for legitimate video-related questions
+const legitimateContextWords = [
+  'video', 'prompt', 'improvement', 'cinematic', 'lighting', 
+  'camera', 'scene', 'shot', 'generate', 'create', 'sora',
+  'cinematography', 'frame', 'footage', 'film', 'animation'
+];
+
+function hasLegitimateContext(text: string): boolean {
+  const lowerText = text.toLowerCase();
+  return legitimateContextWords.some(word => lowerText.includes(word));
+}
 
 // Witty deflection responses
 function getRandomDeflection(): string {
@@ -36,8 +47,18 @@ function getRandomDeflection(): string {
 function detectPromptInjection(text: string): { isInjection: boolean; message?: string } {
   for (const pattern of injectionPatterns) {
     if (pattern.test(text)) {
+      // Check if this is a legitimate video-related question before flagging
+      if (hasLegitimateContext(text)) {
+        console.log("✅ Pattern matched but legitimate video context detected, allowing:", {
+          pattern: pattern.source,
+          snippet: text.substring(0, 100),
+        });
+        continue; // Skip this pattern, check next one
+      }
+      
       console.warn("⚠️ Potential prompt injection attempt detected:", {
         pattern: pattern.source,
+        matchedText: text.substring(0, 200),
         timestamp: new Date().toISOString(),
       });
       return { isInjection: true, message: getRandomDeflection() };
