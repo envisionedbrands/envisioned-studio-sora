@@ -154,12 +154,35 @@ serve(async (req) => {
       // Add reference images if provided
       if (video.image_url) {
         try {
-          const parsedUrls = JSON.parse(video.image_url);
-          if (Array.isArray(parsedUrls) && parsedUrls.length > 0) {
-            kiePayload.input.image_urls = parsedUrls;
+          const parsedPaths = JSON.parse(video.image_url);
+          if (Array.isArray(parsedPaths) && parsedPaths.length > 0) {
+            // Generate signed URLs for each path (valid for 1 hour)
+            const signedUrls = await Promise.all(
+              parsedPaths.map(async (path: string) => {
+                const { data, error } = await supabase.storage
+                  .from('video-inputs')
+                  .createSignedUrl(path, 3600); // 1 hour expiry
+                
+                if (error) {
+                  console.error('Error creating signed URL for path:', path, error);
+                  throw new Error(`Failed to create signed URL: ${error.message}`);
+                }
+                return data.signedUrl;
+              })
+            );
+            kiePayload.input.image_urls = signedUrls;
           }
-        } catch {
-          kiePayload.input.image_urls = [video.image_url];
+        } catch (e) {
+          // Single path (legacy format or single image)
+          const { data, error } = await supabase.storage
+            .from('video-inputs')
+            .createSignedUrl(video.image_url, 3600);
+          
+          if (error) {
+            console.error('Error creating signed URL:', error);
+            throw new Error(`Failed to create signed URL: ${error.message}`);
+          }
+          kiePayload.input.image_urls = [data.signedUrl];
         }
       }
     } else {
@@ -175,7 +198,16 @@ serve(async (req) => {
 
       // Handle image URLs for image-to-video models
       if (video.image_url && video.model.includes("image-to-video")) {
-        kiePayload.input.image_urls = [video.image_url];
+        // Generate signed URL (valid for 1 hour)
+        const { data, error } = await supabase.storage
+          .from('video-inputs')
+          .createSignedUrl(video.image_url, 3600);
+        
+        if (error) {
+          console.error('Error creating signed URL:', error);
+          throw new Error(`Failed to create signed URL: ${error.message}`);
+        }
+        kiePayload.input.image_urls = [data.signedUrl];
       }
     }
 

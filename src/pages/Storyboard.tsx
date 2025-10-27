@@ -161,11 +161,8 @@ const Storyboard = () => {
             continue; // Skip this file but continue with others
           }
 
-          const { data: { publicUrl } } = supabase.storage
-            .from("video-inputs")
-            .getPublicUrl(uploadData.path);
-
-          uploadedUrls.push(publicUrl);
+          // Store just the path - signed URLs will be generated in the edge function
+          uploadedUrls.push(uploadData.path);
         }
 
         // Store multiple URLs as JSON string

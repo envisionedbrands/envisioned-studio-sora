@@ -131,11 +131,8 @@ const Create = () => {
 
         if (uploadError) throw uploadError;
 
-        const { data: { publicUrl } } = supabase.storage
-          .from("video-inputs")
-          .getPublicUrl(uploadData.path);
-
-        imageUrl = publicUrl;
+        // Store just the path - signed URLs will be generated in the edge function
+        imageUrl = uploadData.path;
       }
 
       // Create video record
