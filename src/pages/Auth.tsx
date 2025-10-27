@@ -68,13 +68,34 @@ const Auth = () => {
     }
 
     // Validate invite code
-    const { data: isValid, error: codeError } = await supabase.rpc('use_invite_code', {
-      code_text: validation.data.inviteCode
-    });
+    try {
+      const { data: isValid, error: codeError } = await supabase.rpc('use_invite_code', {
+        code_text: validation.data.inviteCode
+      });
 
-    if (codeError || !isValid) {
+      if (codeError) {
+        setLoading(false);
+        // Check for rate limit error
+        if (codeError.message?.includes("Too many attempts")) {
+          toast.error("Too many invite code attempts. Please wait a few minutes and try again.");
+        } else {
+          toast.error("Invalid or expired invite code. Please check your code and try again.");
+        }
+        return;
+      }
+
+      if (!isValid) {
+        setLoading(false);
+        toast.error("Invalid or expired invite code. Please check your code and try again.");
+        return;
+      }
+    } catch (error: any) {
       setLoading(false);
-      toast.error("Invalid or expired invite code. Please check your code and try again.");
+      if (error.message?.includes("Too many attempts")) {
+        toast.error("Too many invite code attempts. Please wait a few minutes and try again.");
+      } else {
+        toast.error("An error occurred validating the invite code.");
+      }
       return;
     }
 
@@ -134,12 +155,30 @@ const Auth = () => {
           return;
         }
 
-        const { data: isValid, error: codeError } = await supabase.rpc('use_invite_code', {
-          code_text: googleInviteCode.toUpperCase()
-        });
+        try {
+          const { data: isValid, error: codeError } = await supabase.rpc('use_invite_code', {
+            code_text: googleInviteCode.toUpperCase()
+          });
 
-        if (codeError || !isValid) {
-          toast.error("Invalid or expired invite code");
+          if (codeError) {
+            if (codeError.message?.includes("Too many attempts")) {
+              toast.error("Too many invite code attempts. Please wait a few minutes and try again.");
+            } else {
+              toast.error("Invalid or expired invite code");
+            }
+            return;
+          }
+
+          if (!isValid) {
+            toast.error("Invalid or expired invite code");
+            return;
+          }
+        } catch (error: any) {
+          if (error.message?.includes("Too many attempts")) {
+            toast.error("Too many invite code attempts. Please wait a few minutes and try again.");
+          } else {
+            toast.error("An error occurred validating the invite code.");
+          }
           return;
         }
       }

@@ -188,7 +188,15 @@ const CreatePro = () => {
       });
 
       if (functionError) {
-        toast.error("Failed to start video generation");
+        console.error("Function error:", functionError);
+        
+        // Check for rate limit error
+        if (functionError.message?.includes('Rate limit exceeded') || 
+            functionError.message?.includes('Too many')) {
+          toast.error("Rate limit exceeded. Please wait a few minutes and try again.");
+        } else {
+          toast.error("Failed to start video generation");
+        }
         setLoading(false);
         return;
       }

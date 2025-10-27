@@ -41,6 +41,30 @@ serve(async (req) => {
     }
 
     const { videoId } = await req.json();
+    console.log('Processing video generation for videoId:', videoId);
+
+    // Rate limiting: 20 video generation requests per hour per user
+    const { data: rateLimitData, error: rateLimitError } = await supabase
+      .rpc('check_rate_limit', {
+        _identifier: user.id,
+        _action: 'video_generation',
+        _max_attempts: 20,
+        _window_minutes: 60
+      });
+
+    if (rateLimitError) {
+      console.error('Rate limit check error:', rateLimitError);
+    } else if (rateLimitData && !rateLimitData.allowed) {
+      const resetAt = new Date(rateLimitData.reset_at);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Rate limit exceeded',
+          message: `Too many video generation requests. Please try again after ${resetAt.toLocaleTimeString()}.`,
+          reset_at: rateLimitData.reset_at
+        }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Get video record
     const { data: video, error: videoError } = await supabase
