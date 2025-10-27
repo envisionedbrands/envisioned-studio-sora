@@ -1,9 +1,20 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+// Input validation schema
+const messagesSchema = z.object({
+  messages: z.array(
+    z.object({
+      role: z.enum(['user', 'assistant', 'system']),
+      content: z.string().min(1, "Message content cannot be empty").max(10000, "Message content is too long (max 10KB)"),
+    })
+  ).min(1, "At least one message is required").max(50, "Too many messages (max 50)"),
+});
 
 // Prompt injection detection patterns
 const injectionPatterns = [
@@ -73,7 +84,19 @@ serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json();
+    const body = await req.json();
+    
+    // Validate input
+    const validation = messagesSchema.safeParse(body);
+    if (!validation.success) {
+      console.error("Input validation failed:", validation.error.issues);
+      return new Response(
+        JSON.stringify({ error: "Invalid input", details: validation.error.issues[0].message }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    const { messages } = validation.data;
     
     // Check the last user message for prompt injection attempts
     const lastUserMessage = messages.filter((m: any) => m.role === "user").pop();
