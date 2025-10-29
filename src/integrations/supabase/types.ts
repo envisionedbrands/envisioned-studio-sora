@@ -205,6 +205,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_invite_code: { Args: { code_text: string }; Returns: Json }
       check_rate_limit: {
         Args: {
           _action: string
@@ -216,6 +217,7 @@ export type Database = {
       }
       check_user_limit: { Args: never; Returns: boolean }
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
+      consume_invite_code: { Args: { code_text: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

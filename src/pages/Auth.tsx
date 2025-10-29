@@ -67,38 +67,31 @@ const Auth = () => {
       return;
     }
 
-    // Validate invite code
+    // Check invite code validity WITHOUT consuming it
     try {
-      const { data: isValid, error: codeError } = await supabase.rpc('use_invite_code', {
+      const { data: checkResult, error: codeError } = await supabase.rpc('check_invite_code', {
         code_text: validation.data.inviteCode
       });
 
       if (codeError) {
         setLoading(false);
-        // Check for rate limit error
-        if (codeError.message?.includes("Too many attempts")) {
-          toast.error("Too many invite code attempts. Please wait a few minutes and try again.");
-        } else {
-          toast.error("Invalid or expired invite code. Please check your code and try again.");
-        }
+        toast.error("An error occurred validating the invite code.");
         return;
       }
 
-      if (!isValid) {
+      const result = checkResult as { valid: boolean; error?: string };
+      if (!result.valid) {
         setLoading(false);
-        toast.error("Invalid or expired invite code. Please check your code and try again.");
+        toast.error(result.error || "Invalid or expired invite code. Please check your code and try again.");
         return;
       }
     } catch (error: any) {
       setLoading(false);
-      if (error.message?.includes("Too many attempts")) {
-        toast.error("Too many invite code attempts. Please wait a few minutes and try again.");
-      } else {
-        toast.error("An error occurred validating the invite code.");
-      }
+      toast.error("An error occurred validating the invite code.");
       return;
     }
 
+    // Create the user account
     const { error } = await supabase.auth.signUp({
       email: validation.data.email,
       password: validation.data.password,
@@ -110,13 +103,29 @@ const Auth = () => {
       },
     });
 
-    setLoading(false);
-
     if (error) {
+      setLoading(false);
       toast.error(error.message);
-    } else {
-      toast.success(t('common.success.accountCreated'));
+      return;
     }
+
+    // Only consume the invite code AFTER successful signup
+    try {
+      const { data: consumed, error: consumeError } = await supabase.rpc('consume_invite_code', {
+        code_text: validation.data.inviteCode
+      });
+
+      if (consumeError || !consumed) {
+        console.error("Failed to consume invite code after signup:", consumeError);
+        // Don't show error to user since account was created successfully
+      }
+    } catch (error) {
+      console.error("Failed to consume invite code after signup:", error);
+      // Don't show error to user since account was created successfully
+    }
+
+    setLoading(false);
+    toast.success(t('common.success.accountCreated'));
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -156,29 +165,33 @@ const Auth = () => {
         }
 
         try {
-          const { data: isValid, error: codeError } = await supabase.rpc('use_invite_code', {
+          const { data: checkResult, error: codeError } = await supabase.rpc('check_invite_code', {
             code_text: googleInviteCode.toUpperCase()
           });
 
           if (codeError) {
-            if (codeError.message?.includes("Too many attempts")) {
-              toast.error("Too many invite code attempts. Please wait a few minutes and try again.");
-            } else {
-              toast.error("Invalid or expired invite code");
-            }
+            toast.error("An error occurred validating the invite code.");
             return;
           }
 
-          if (!isValid) {
-            toast.error("Invalid or expired invite code");
+          const result = checkResult as { valid: boolean; error?: string };
+          if (!result.valid) {
+            toast.error(result.error || "Invalid or expired invite code");
+            return;
+          }
+
+          // Note: For OAuth, we validate but consume the code before knowing if signup succeeds
+          // This is a known limitation - OAuth redirects before we can confirm account creation
+          const { data: consumed } = await supabase.rpc('consume_invite_code', {
+            code_text: googleInviteCode.toUpperCase()
+          });
+
+          if (!consumed) {
+            toast.error("Failed to use invite code");
             return;
           }
         } catch (error: any) {
-          if (error.message?.includes("Too many attempts")) {
-            toast.error("Too many invite code attempts. Please wait a few minutes and try again.");
-          } else {
-            toast.error("An error occurred validating the invite code.");
-          }
+          toast.error("An error occurred validating the invite code.");
           return;
         }
       }
