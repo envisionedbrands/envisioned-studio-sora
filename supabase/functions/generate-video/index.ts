@@ -149,6 +149,7 @@ serve(async (req) => {
         ],
         n_frames: String(durationInSeconds), // Must be "10", "15", or "25"
         aspect_ratio: video.aspect_ratio === "16:9" ? "landscape" : "portrait",
+        quality: "high",
       };
 
       // Add reference images if provided
@@ -194,6 +195,7 @@ serve(async (req) => {
         prompt: video.prompt,
         aspect_ratio: video.aspect_ratio === "16:9" ? "landscape" : "portrait",
         n_frames: String(durationInSeconds),
+        quality: "high",
       };
 
       // Handle image URLs for image-to-video models
